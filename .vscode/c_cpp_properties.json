@@ -1,0 +1,43 @@
+{
+    "configurations": [
+        {
+            "name": "Target 1",
+            "includePath": [
+                "d:\\Keil\\51Project\\单区安检门V0.1\\MAIN",
+                "d:\\Keil\\51Project\\单区安检门V0.1\\delay",
+                "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\AIP650",
+                "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\GUI",
+                "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\PWM",
+                "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\EEPROM",
+                "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\ADC",
+                "D:\\Keil\\C51\\c51v960a\\C51\\INC"
+            ],
+            "defines": [
+                "__C51__",
+                "__VSCODE_C51__",
+                "reentrant=",
+                "compact=",
+                "small=",
+                "large=",
+                "data=",
+                "idata=",
+                "pdata=",
+                "bdata=",
+                "xdata=",
+                "code=",
+                "bit=char",
+                "sbit=char",
+                "sfr=char",
+                "sfr16=int",
+                "sfr32=int",
+                "interrupt=",
+                "using=",
+                "_at_=",
+                "_priority_=",
+                "_task_="
+            ],
+            "intelliSenseMode": "${default}"
+        }
+    ],
+    "version": 4
+}

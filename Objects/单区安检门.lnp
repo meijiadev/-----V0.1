@@ -1,0 +1,9 @@
+".\Objects\main.obj",
+".\Objects\delay.obj",
+".\Objects\AIP650.obj",
+".\Objects\PWM.obj",
+".\Objects\EEPROM.obj",
+".\Objects\GUI.obj",
+".\Objects\ADC.obj" 
+TO ".\Objects\单区安检门" 
+PRINT(".\Listings\单区安检门.m51") RAMSIZE(256) 

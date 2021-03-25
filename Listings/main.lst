@@ -1,0 +1,89 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              03/24/2021 14:47:46 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil\C51\c51v960a\C51\BIN\C51.EXE MAIN\main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAIN;.\delay;.\H
+                    -ARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC) DEBUG OBJECTEXTEND PRINT(.\Listings\main.
+                    -lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "STC8G.H"
+   2          #include "intrins.h"
+   3          #include "main.h"
+   4          //#include  "GPIO.h"
+   5          #include "delay.h"
+   6          #include "AIP650.h"
+   7          #include "PWM.h"
+   8          #include "GUI.h"
+   9          #include "EEPROM.h"
+  10          #include "adc.h"
+  11          
+  12          extern u8 menu; //菜单
+  13          
+  14          /********************************
+  15          功能描述：IO口初始化
+  16          入口参数：无
+  17          返回值：无
+  18          *********************************/
+  19          
+  20          void IO_init(void)
+  21          {
+  22   1        P0M1 &= 0x00;
+  23   1        P0M0 &= 0x00; //设置P0为准双向口
+  24   1        P1M1 &= 0x00;
+  25   1        P1M0 &= 0x00; //设置P1为准双向口
+  26   1        P2M1 &= 0x00;
+  27   1        P2M0 &= 0x00; //设置P2为准双向口
+  28   1        P3M1 &= 0x00;
+  29   1        P3M0 &= 0x00; //设置P3为准双向口
+  30   1        P4M1 &= 0x00;
+  31   1        P4M0 &= 0x00; //设置P4为准双向口
+  32   1        P5M1 &= 0x00;
+  33   1        P5M0 &= 0x00; //设置P5为准双向口
+  34   1        P6M1 &= 0x00;
+  35   1        P6M0 &= 0x00; //设置P6为准双向口
+  36   1        P7M1 &= 0x00;
+  37   1        P7M0 &= 0x00; //设置P7为准双向口
+  38   1      }
+  39          
+  40          /********************************
+  41          功能描述：主函数
+  42          入口参数：无
+  43          返回值：无
+  44          *********************************/
+  45          void main()
+  46          {
+  47   1        IO_init();
+  48   1        Light_Level_Set(6);
+  49   1        Light_Level_Set_1(6);
+  50   1        EEPROM_init();
+  51   1        adc_init(ADC_SYSclk_DIV_2); //初始化ADC,P1.0通道 ，ADC时钟频率：SYSclk/2
+  52   1        menu = 0;
+  53   1        while (1)
+C51 COMPILER V9.60.0.0   MAIN                                                              03/24/2021 14:47:46 PAGE 2   
+
+  54   1        {
+  55   2          meun_UI();
+  56   2          KEY_CL();         
+  57   2          Fore_XS();        
+  58   2          IR_Fore();
+  59   2          ADC();
+  60   2          //Delay_ms(1000);
+  61   2        }
+  62   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     90    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

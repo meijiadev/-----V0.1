@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "intrins.h": "c",
+        "stc8g.h": "c",
+        "main.h": "c",
+        "uart.h": "c"
+    }
+}
