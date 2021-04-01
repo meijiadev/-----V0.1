@@ -1,6 +1,10 @@
 #ifndef __ADC_H
 #define __ADC_H
 
+
+
+
+
 //此枚举定义不允许用户修改
 typedef enum
 {
@@ -56,4 +60,5 @@ typedef enum // 枚举ADC通道
 void adc_init(ADC_SPEED_enum speed);
 int adc_once(ADCN_enum adcn, ADCRES_enum resolution);
 void ADC();
+void offLED();
 #endif

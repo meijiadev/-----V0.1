@@ -1,175 +1,215 @@
-C51 COMPILER V9.60.0.0   EEPROM                                                            03/23/2021 11:15:14 PAGE 1   
+C51 COMPILER V9.60.0.0   EEPROM                                                            04/01/2021 19:45:08 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE EEPROM
 OBJECT MODULE PLACED IN .\Objects\EEPROM.obj
 COMPILER INVOKED BY: D:\Keil\C51\c51v960a\C51\BIN\C51.EXE HARDWARE\EEPROM\EEPROM.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAI
-                    -N;.\delay;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC) DEBUG OBJECTEXTEND PRINT(.\L
-                    -istings\EEPROM.lst) TABS(2) OBJECT(.\Objects\EEPROM.obj)
+                    -N;.\delay;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR
+                    -) DEBUG OBJECTEXTEND PRINT(.\Listings\EEPROM.lst) TABS(2) OBJECT(.\Objects\EEPROM.obj)
 
 line level    source
 
-   1          #include  "STC8G.H"
+   1          #include "STC8G.H"
    2          #include "EEPROM.h"
    3          #include "main.h"
-   4          
-   5          bit flag_eeprom1=1;                   //掉电存储的标志位
-   6          
-   7          //----密码数据--------------------
-   8          extern u8 mima1;
-   9          extern u8 mima2;
-  10          extern u8 mima3;
-  11          extern u8 mima4;
-  12          extern u8 LMD_1;
-  13          
-  14          
+   4          #include "uart.h"
+   5          
+   6          bit flag_eeprom1 = 1; //掉电存储的标志位
+   7          
+   8          u16 PEOPLE_NUMBER=0;      //经过人数
+   9          u8  PEOPLE_NUMBER_H;     //经过人数的高八位
+  10          u8  PEOPLE_NUMBER_L;     //经过人数的低八位
+  11          
+  12          u16 ALARM_NUMBER=0;       //报警人数
+  13          u8  ALARM_NUMBER_H;     //报警人数的高八位
+  14          u8  ALARM_NUMBER_L;    //报警人数的低八位
   15          
-  16          /************************************************** 
-  17            功能描述: 操作函数
-  18            入口参数：
-  19            说    明：                        
-  20          **************************************************/
-  21          void IapIdle()
-  22          {
-  23   1        IAP_CONTR=0;                //关闭IAP功能
-  24   1        IAP_CMD=0;                  //清除命令寄存器
-  25   1        IAP_TRIG=0;                 //清除触发寄存器
-  26   1        IAP_ADDRH=0x80;             //装地址设置到非IAP区域
-  27   1        IAP_ADDRL=0;
-  28   1      }
-  29          /************************************************** 
-  30            功能描述: 读取一个字节函数
-  31            入口参数：
-  32            说    明：                        
-  33          **************************************************/
-  34          u8 IapReadByte(u16 addr)
-  35          {
-  36   1        u8 dat;  
-  37   1        IAP_CONTR=ENABLE_IAP;
-  38   1        IAP_TPS=24;                   //设置擦写等待参数24MHZ  8G芯片增加
-  39   1        IAP_CMD=CMD_READ;
-  40   1        IAP_ADDRL=addr;
-  41   1        IAP_ADDRH=addr>>8;
-  42   1        IAP_TRIG=0x5a;
-  43   1        IAP_TRIG=0xa5;
-  44   1        _nop_();
-  45   1        _nop_();
-  46   1        _nop_();
-  47   1        dat=IAP_DATA;
-  48   1        IapIdle();
-  49   1        return dat;
-  50   1      }
-  51          /************************************************** 
-  52            功能描述: 写入一个字节函数
-  53            入口参数：addr 
-C51 COMPILER V9.60.0.0   EEPROM                                                            03/23/2021 11:15:14 PAGE 2   
+  16          
+  17          
+  18          //----密码数据--------------------
+  19          extern u8 mima1;
+  20          extern u8 mima2;
+  21          extern u8 mima3;
+  22          extern u8 mima4;
+  23          extern u8 dB;
+  24          
+  25          
+  26          
+  27          /************************************************** 
+  28            功能描述: 操作函数
+  29            入口参数：
+  30            说    明：                        
+  31          **************************************************/
+  32          void IapIdle()
+  33          {
+  34   1        IAP_CONTR = 0;    //关闭IAP功能
+  35   1        IAP_CMD = 0;    //清除命令寄存器
+  36   1        IAP_TRIG = 0;   //清除触发寄存器
+  37   1        IAP_ADDRH = 0x80; //装地址设置到非IAP区域
+  38   1        IAP_ADDRL = 0;
+  39   1      }
+  40          /************************************************** 
+  41            功能描述: 读取一个字节函数
+  42            入口参数：
+  43            说    明：                        
+  44          **************************************************/
+  45          u8 IapReadByte(u16 addr)
+  46          {
+  47   1        u8 dat;
+  48   1        IAP_CONTR = ENABLE_IAP;
+  49   1        IAP_TPS = 24; //设置擦写等待参数24MHZ  8G芯片增加
+  50   1        IAP_CMD = CMD_READ;
+  51   1        IAP_ADDRL = addr;
+  52   1        IAP_ADDRH = addr >> 8;
+  53   1        IAP_TRIG = 0x5a;
+C51 COMPILER V9.60.0.0   EEPROM                                                            04/01/2021 19:45:08 PAGE 2   
 
-  54            说    明：                        
-  55          **************************************************/
-  56          void IapProgramByte(u16 addr,u8 dat)
-  57          {
-  58   1        IAP_CONTR=ENABLE_IAP;
-  59   1        IAP_TPS=24;                   //设置擦写等待参数24MHZ  8G芯片增加
-  60   1        IAP_CMD=CMD_PROGRAM;
-  61   1        IAP_ADDRL=addr;
-  62   1        IAP_ADDRH=addr>>8;
-  63   1        IAP_DATA=dat;
-  64   1        IAP_TRIG=0x5a;
-  65   1        IAP_TRIG=0xa5;
-  66   1        _nop_();
-  67   1        _nop_();
-  68   1        _nop_();
-  69   1        IapIdle();
-  70   1      }
-  71          /************************************************** 
-  72            功能描述: 擦除一个字节函数
-  73            入口参数：
-  74            说    明：                        
-  75          **************************************************/
-  76          void IapEraseSector(u16 addr)
-  77          {
-  78   1        IAP_CONTR=ENABLE_IAP;
-  79   1        IAP_TPS=24;                   //设置擦写等待参数24MHZ  8G芯片增加
-  80   1        IAP_CMD=CMD_ERASE;
-  81   1        IAP_ADDRL=addr;
-  82   1        IAP_ADDRH=addr>>8;
-  83   1        IAP_TRIG=0x5a;
-  84   1        IAP_TRIG=0xa5;
-  85   1        _nop_();
-  86   1        _nop_();
-  87   1        _nop_();
-  88   1        IapIdle();
-  89   1      }
-  90          
-  91          /************************************************** 
-  92            功能描述: EEPROM初始化
-  93            入口参数：
-  94            说    明：                        
-  95          **************************************************/ 
-  96          void EEPROM_init()
-  97          {
-  98   1      
-  99   1          mima1=IapReadByte(0x01);
- 100   1          mima2=IapReadByte(0x02);  
- 101   1          mima3=IapReadByte(0x03);
- 102   1          mima4=IapReadByte(0x04);  
- 103   1          LMD_1=IapReadByte(0x05);
- 104   1        
- 105   1        if(mima1==255)
- 106   1        {
- 107   2           mima1=1;mima2=2;mima3=3;mima4=4;
- 108   2           saveeepro();                          //掉电存储       
- 109   2        }
- 110   1        if(LMD_1==255)
- 111   1        {
- 112   2          LMD_1=60;
- 113   2        }   
- 114   1        
- 115   1      /*  
-C51 COMPILER V9.60.0.0   EEPROM                                                            03/23/2021 11:15:14 PAGE 3   
+  54   1        IAP_TRIG = 0xa5;
+  55   1        _nop_();
+  56   1        _nop_();
+  57   1        _nop_();
+  58   1        dat = IAP_DATA;
+  59   1        IapIdle();
+  60   1        return dat;
+  61   1      }
+  62          /************************************************** 
+  63            功能描述: 写入一个字节函数
+  64            入口参数：addr 
+  65            说    明：                        
+  66          **************************************************/
+  67          void IapProgramByte(u16 addr, u8 dat)
+  68          {
+  69   1        IAP_CONTR = ENABLE_IAP;
+  70   1        IAP_TPS = 24; //设置擦写等待参数24MHZ  8G芯片增加
+  71   1        IAP_CMD = CMD_PROGRAM;
+  72   1        IAP_ADDRL = addr;
+  73   1        IAP_ADDRH = addr >> 8;
+  74   1        IAP_DATA = dat;
+  75   1        IAP_TRIG = 0x5a;
+  76   1        IAP_TRIG = 0xa5;
+  77   1        _nop_();
+  78   1        _nop_();
+  79   1        _nop_();
+  80   1        IapIdle();
+  81   1      }
+  82          /************************************************** 
+  83            功能描述: 擦除一个字节函数
+  84            入口参数：
+  85            说    明：                        
+  86          **************************************************/
+  87          void IapEraseSector(u16 addr)
+  88          {
+  89   1        IAP_CONTR = ENABLE_IAP;
+  90   1        IAP_TPS = 24; //设置擦写等待参数24MHZ  8G芯片增加
+  91   1        IAP_CMD = CMD_ERASE;
+  92   1        IAP_ADDRL = addr;
+  93   1        IAP_ADDRH = addr >> 8;
+  94   1        IAP_TRIG = 0x5a;
+  95   1        IAP_TRIG = 0xa5;
+  96   1        _nop_();
+  97   1        _nop_();
+  98   1        _nop_();
+  99   1        IapIdle();
+ 100   1      }
+ 101          
+ 102          /************************************************** 
+ 103            功能描述: EEPROM初始化
+ 104            入口参数：
+ 105            说    明：                        
+ 106          **************************************************/
+ 107          void EEPROM_init()
+ 108          {
+ 109   1        // PEOPLE_NUMBER_H=IapReadByte(PEOPLE_NUM_H_ADDR);
+ 110   1        // PEOPLE_NUMBER_L=IapReadByte(PEOPLE_NUM_L_ADDR);
+ 111   1        // PEOPLE_NUMBER=PEOPLE_NUMBER_H<<8;
+ 112   1        // PEOPLE_NUMBER|=PEOPLE_NUMBER_L;
+ 113   1        // ALARM_NUMBER_H=IapReadByte(ALARM_NUM_H_ADDR);
+ 114   1        // ALARM_NUMBER_L=IapReadByte(ALARM_NUM_L_ADDR);
+ 115   1        // ALARM_NUMBER=ALARM_NUMBER_H<<8;               
+C51 COMPILER V9.60.0.0   EEPROM                                                            04/01/2021 19:45:08 PAGE 3   
 
- 116   1          TAHH=TAHH_H*256+TAHH_L;
- 117   1        
- 118   1         if(TAHH==65535)
- 119   1          {
- 120   1              TAHH=373;
- 121   1              TAHH_L=TAHH;
- 122   1              TAHH_H=(TAHH>>8);   
- 123   1              dist_m1=0;
- 124   1              saveeepro();                       //掉电存储
- 125   1          }
- 126   1      */      
- 127   1      }
- 128          
- 129          /************************************************** 
- 130            功能描述: 掉电存储
- 131            入口参数：
- 132            说    明：                        
- 133          **************************************************/ 
- 134          void saveeepro()  
- 135          {
- 136   1        
- 137   1          IapEraseSector(0);                     //擦除0x01地址中的数据   一定要先擦除再写进  同一地址        
- 138   1          IapProgramByte(0x01,mima1);            //擦除完成就可以写入了
- 139   1          IapProgramByte(0x02,mima2);            
- 140   1          IapProgramByte(0x03,mima3);          
- 141   1          IapProgramByte(0x04,mima4);                      
- 142   1          IapProgramByte(0x05,LMD_1); 
- 143   1        
- 144   1      }
- 145          
- 146          /************************EEPROM结束**********************************/
+ 116   1        // ALARM_NUMBER|=ALARM_NUMBER_L;     
+ 117   1        mima1 = IapReadByte(0x01);
+ 118   1        mima2 = IapReadByte(0x02);
+ 119   1        mima3 = IapReadByte(0x03);
+ 120   1        mima4 = IapReadByte(0x04);
+ 121   1        dB = IapReadByte(0x05);
+ 122   1      
+ 123   1        if (mima1 == 255)
+ 124   1        {
+ 125   2          mima1 = 1;
+ 126   2          mima2 = 2;
+ 127   2          mima3 = 3;
+ 128   2          mima4 = 4;
+ 129   2          saveeepro(); //掉电存储
+ 130   2        }
+ 131   1        if (dB == 255)
+ 132   1        {
+ 133   2          dB = 60;
+ 134   2        }
+ 135   1      
+ 136   1        /*  
+ 137   1          TAHH=TAHH_H*256+TAHH_L;
+ 138   1        
+ 139   1         if(TAHH==65535)
+ 140   1          {
+ 141   1              TAHH=373;
+ 142   1              TAHH_L=TAHH;
+ 143   1              TAHH_H=(TAHH>>8);   
+ 144   1              dist_m1=0;
+ 145   1              saveeepro();                       //掉电存储
+ 146   1          }
+ 147   1      */
+ 148   1      }
+ 149          
+ 150          /**
+ 151           * @brief 掉电存储，保存密码
+ 152           * @note   
+ 153           * @retval None
+ 154           */
+ 155          void saveeepro()
+ 156          {
+ 157   1        IapEraseSector(SECTION_1);       //擦除0x01地址中的数据   一定要先擦除再写进  同一地址
+ 158   1        IapProgramByte(0x01, mima1); //擦除完成就可以写入了
+ 159   1        IapProgramByte(0x02, mima2);
+ 160   1        IapProgramByte(0x03, mima3);
+ 161   1        IapProgramByte(0x04, mima4);
+ 162   1        IapProgramByte(0x05, dB);
+ 163   1      }
+ 164          
+ 165          /**
+ 166           * @brief  保存经过的总人数
+ 167           * @note   
+ 168           * @retval None
+ 169           */
+ 170          void savePeopleNumber(){
+ 171   1        PEOPLE_NUMBER_L=PEOPLE_NUMBER;
+ 172   1        PEOPLE_NUMBER_H=PEOPLE_NUMBER>>8;
+ 173   1        IapEraseSector(SECTION_2);
+ 174   1        IapProgramByte(PEOPLE_NUM_H_ADDR,PEOPLE_NUMBER_H);
+ 175   1        IapProgramByte(PEOPLE_NUM_L_ADDR,PEOPLE_NUMBER_L);
+ 176   1      }
+ 177          
+C51 COMPILER V9.60.0.0   EEPROM                                                            04/01/2021 19:45:08 PAGE 4   
+
+ 178          
+ 179          
+ 180          
+ 181          
+ 182          
+ 183          /************************EEPROM结束**********************************/
+*** WARNING C316 IN LINE 183 OF HARDWARE\EEPROM\EEPROM.c: unterminated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    194    ----
+   CODE SIZE        =    220    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----    ----
+   DATA SIZE        =      8    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

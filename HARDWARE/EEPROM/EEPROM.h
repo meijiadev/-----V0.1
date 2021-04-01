@@ -13,6 +13,15 @@
 #define CMD_PROGRAM  2	                   //写入字节
 #define CMD_ERASE    3	                   //擦除字节
 #define ENABLE_IAP   0X80	                 //编程周期由晶振决定（如果<12MHZ选用此项）吧 0x80 =1000 0000
+
+#define SECTION_1    0x00                  //扇区1地址
+#define SECTION_2    0x200                 //扇区2地址
+
+#define PEOPLE_NUM_H_ADDR   0x201           //经过人数高八位
+#define PEOPLE_NUM_L_ADDR   0x202           //经过人数的低八位
+#define ALARM_NUM_H_ADDR    0x203           //报警人数的高八位
+#define ALARM_NUM_L_ADDR    0x204           //报警人数的低八位
+
 //#define IAP_ADDRESS  0X0000	               //内部EEPROM地址
 
 

@@ -10,6 +10,8 @@
                 "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\PWM",
                 "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\EEPROM",
                 "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\ADC",
+                "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\UART",
+                "d:\\Keil\\51Project\\单区安检门V0.1\\HARDWARE\\IR",
                 "D:\\Keil\\C51\\c51v960a\\C51\\INC"
             ],
             "defines": [

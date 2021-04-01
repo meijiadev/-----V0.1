@@ -5,6 +5,11 @@
 u8 Freq_Parm = 2;
 u8 Freq_KEY;
 
+/**
+ * @brief  频率设置
+ * @note   
+ * @retval None
+ */
 void Fore_XS()
 {
 	//	  PWMSET= 0x00;                                //使能PWM模块
@@ -13,16 +18,15 @@ void Fore_XS()
 	PWM15_PWM2_Enable();
 	P_SW2 = 0x80;
 	PWM2CKS = 0x00; // PWM时钟为系统时钟
-	switch (Freq_Parm)
+	switch (Freq_Parm)                 
 	{
 		//----6.5KHZ---------------------------------240000
 	case 1:
-		PWM2C = 0xE64;	  //设置PWM周期为0800H个PWM时钟
-		PWM20T2 = 0x0720; //PWM0在计数值为700H地方输出高电平
-		PWM20T1 = 0x0ABE; //PWM0在计数值为100H地方输出低电平
-
-		PWM21T2 = 0x0000; //PWM1在计数值为0080H地方输出高电平
-		PWM21T1 = 0x0390; //PWM1在计数值为0780H地方输出低电平
+		PWM2C = 0xE6C;	  //设置PWM周期为0800H个PWM时钟
+		PWM20T2 = 0x0720; //PWM0在计数值为720H地方输出高电平
+		PWM20T1 = 0x0ABE; //PWM0在计数值为ABEH地方输出低电平
+		PWM21T2 = 0x0000; //PWM1在计数值为0000H地方输出高电平
+		PWM21T1 = 0x0390; //PWM1在计数值为0390H地方输出低电平
 		Freq_KEY = 0;
 		break;
 		//----6.8KHZ---------------------------------
@@ -82,7 +86,6 @@ void Fore_XS()
 		PWM20T1 = 0x083A;
 		PWM21T2 = 0x0000;
 		PWM21T1 = 0x02C0;
-
 		break;
 		//----8.9KHZ---------------------------------
 	case 9:
@@ -99,18 +102,23 @@ void Fore_XS()
 	P_SW2 = 0x00;
 }
 
-//----红外发射----------------
+/**
+ * @brief  红外发射
+ * @note   
+ * @retval None
+ */
 void IR_Fore()
 {
 	P3M1 = 0x00;
-	P3M0 = 0x08;		 //设置P33为推挽输出
-	PWM15_PWM3_Enable(); //使能PWM模块
+	P3M0 = 0x08;		   //设置P33为推挽输出
+	PWM15_PWM3_Enable();  //使能PWM模块
 	P_SW2 = 0x80;
-	PWM3CKS = 0x00; // PWM时钟为系统时钟
-	PWM3C = 0x1880;	  //设置PWM周期为0800H个PWM时钟
-	PWM33T1 = 0x0100; //PWM3在计数值为700H地方输出低电平
-	PWM33T2 = 0x0CFF; //PWM3在计数值为100H地方输出高电平
-	PWM33CR = 0x80;	  //使能PWM0输出
+	PWM3CKS = 0x00; // 时钟选择 （系统时钟）
+	//38Khz
+	PWM3C = 0x0274;	     //PWM计数器寄存器 计算出输出频率
+	PWM33T1 = 0x0100;   //PWM3在计数值为700H地方输出低电平
+	PWM33T2 = 0x0240;   //PWM3在计数值为100H地方输出高电平
+	PWM33CR = 0x80;	   // (通道控制寄存器)使能PWM0输出 
 	P_SW2 = 0x00;
 	PWMCFG23 = 0x11;
 }

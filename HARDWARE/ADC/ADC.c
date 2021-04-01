@@ -2,17 +2,20 @@
 #include <string.h>
 #include <stdio.h>
 #include <intrins.h>
-#include "adc.h"
+#include "ADC.h"
 #include "main.h"
 #include "AIP650.h"
+#include "uart.h"
 
-u16 ADC_Data0 = 0;
 
+extern u8 IR_ON;
+extern u16 ALARM_NUMBER;
+bit    isCountAN=0;           //是否计算报警人数
 
 /*
 *@brief      ADC初始化
-*@param      adcn            选择ADC通道
-*@param      speed      		ADC时钟频率
+*@param      adcn       选择ADC通道
+*@param      speed      ADC时钟频率
 *@return     void
 * Sample usage:   adc_init(ADC_P10,ADC_SYSclk_DIV_2);//初始化P1.0为ADC功能,ADC时钟频率：SYSclk/2
 */
@@ -24,17 +27,16 @@ void adc_init(ADC_SPEED_enum speed)
 	ADC_CONTR|=1<<7 ;        //打开ADC电源   建议在空闲模式和掉电模式前关闭电源
 	ADC_CONTR &=0xf0;       // 清除ADC_CHS 
     ADCCFG|=speed&0x0f;      //设置 ADC时钟频率 默认 0000 SYSclk/2/1 
-	ADCCFG|=0x20;            //ADCCFG:1101 1110  设置右对齐 
-	
+	ADCCFG|=0x20;            //ADCCFG:1101 1110  设置右对齐 	
 }
 
-//*
-//  @brief      ADC转换一次
-//  @param      adcn            选择ADC通道
-//  @param      resolution      分辨率
-//  @return     void
-//  Sample usage:               adc_convert(ADC_P10, ADC_10BIT);
-//*
+/*
+ *  @brief     ADC转换一次
+ * @param      adcn            选择ADC通道
+ * @param     resolution      分辨率
+ * @return    转换结果
+ * Sample usage: adc_convert(ADC_P10, ADC_10BIT);
+ */
 int adc_once(ADCN_enum adcn, ADCRES_enum resolution)
 {
 	u16 adc_value;
@@ -43,21 +45,14 @@ int adc_once(ADCN_enum adcn, ADCRES_enum resolution)
 	ADC_CONTR|=0x40;         //开始ADC转换，转换完成后硬件自动将此位清零
 	_nop_();
 	_nop_();
+	_nop_();
 	while (!(ADC_CONTR & 0x20));				// 查询 ADC 完成标志
 	ADC_CONTR &= ~0x20; // 清完成标志
-	// adc_value = ADC_RES;  //存储 ADC 的 10 位结果的高 2 位
-	// adc_value <<= 8;
-	// adc_value |= ADC_RESL;  //存储 ADC 的 10 位结果的低 8 位
-	_nop_();
 	adc_value=(ADC_RES<<8)|ADC_RESL;
 	adc_value >>= resolution; //取多少位
 	return adc_value;
 }
 
-void closAdc()
-{
-	ADC_CONTR=0;
-}
 
 /************************************************** 
   功能描述: //ADC处理
@@ -66,12 +61,86 @@ void closAdc()
 **************************************************/
 void ADC()
 {
-	
-	u16 ADCResult0 ;
-    float temp;
+	if (IR_ON==1)
+	{
+	//u16 ADCResult0 ;
+	u16 ADC_Data0 ;
+    //float temp;
 	ADC_Data0 = adc_once(ADC_P10, ADC_10BIT); //采集一次ADC，精度10位 
-    temp=(float)4900/(float)1024;
-	AiP650_DisPlayFour_1(ADC_Data0);
-	ADCResult0=(u16)(temp*(float)ADC_Data0);
-	AiP650_DisPlayFour(ADCResult0); 
+    //temp=(float)4900/(float)1024;
+	//ADCResult0=(u16)(temp*(float)AD_Data0);  计算输出电压  
+	if (ADC_Data0>80)
+	{
+		if (isCountAN==0)
+		{
+			isCountAN=1;
+			ALARM_NUMBER++;
+		}
+	}
+	
+	if(ADC_Data0>80&&ADC_Data0<200)
+	{
+	 LED1=0;
+	 BUZZ=0;
+	}else if (ADC_Data0>200&&ADC_Data0<400)
+	{
+	 LED1=0;
+	 LED2=0; 
+	 BUZZ=0;
+	}else if (ADC_Data0>400&&ADC_Data0<600)
+	{
+	 LED1=0;
+	 LED2=0;
+	 LED3=0;
+	 BUZZ=0;
+	}else if (ADC_Data0>600&&ADC_Data0<800)
+	{
+	 LED1=0;
+	 LED2=0;
+	 LED3=0;
+	 LED4=0;
+	 BUZZ=0;
+	}else if (ADC_Data0>800&&ADC_Data0<1000)
+	{
+	 LED1=0;
+	 LED2=0;
+	 LED3=0;
+	 LED4=0;
+	 LED5=0;	
+	 BUZZ=0;
+	}else if (ADC_Data0>1000)
+	{
+	 LED1=0;
+	 LED2=0;
+	 LED3=0;
+	 LED4=0;
+	 LED5=0;
+	 LED6=0;
+	 BUZZ=0;
+	}
+	//UartSend(ADC_Data0);	
+	}else if (IR_ON==0)
+	{
+		//当人走了之后将所有参数复位
+		isCountAN=0;
+		offLED();
+		BUZZ=1;        //关闭蜂鸣器
+	}
+     
 }
+
+/*
+ 功能描述：熄灭所有的LED灯
+*/
+void offLED(){
+	LED1=1;
+	LED2=1;
+    LED3=1;
+    LED4=1;
+	LED5=1;
+	LED6=1;
+}
+
+
+
+

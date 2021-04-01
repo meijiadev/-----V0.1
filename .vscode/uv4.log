@@ -1,9 +1,16 @@
 Build target 'Target 1'
+compiling EEPROM.c...
+HARDWARE\EEPROM\EEPROM.c(183): warning C316: unterminated conditionals
+compiling GUI.c...
+HARDWARE\GUI\GUI.c(524): warning C316: unterminated conditionals
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?CLOSADC?ADC
+    SEGMENT: ?PR?SAVEPEOPLENUMBER?EEPROM
 
-Program Size: data=77.1 xdata=0 code=3571
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_UARTSENDSTR?UART
+
+Program Size: data=104.3 xdata=0 code=3591
 creating hex file from ".\Objects\单区安检门"...
-".\Objects\单区安检门" - 0 Error(s), 1 Warning(s).
+".\Objects\单区安检门" - 0 Error(s), 4 Warning(s).
 Build Time Elapsed:  00:00:00

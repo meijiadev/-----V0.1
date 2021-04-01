@@ -3,6 +3,8 @@
         "intrins.h": "c",
         "stc8g.h": "c",
         "main.h": "c",
-        "uart.h": "c"
+        "uart.h": "c",
+        "adc.h": "c",
+        "aip650.h": "c"
     }
 }

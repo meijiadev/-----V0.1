@@ -1,11 +1,11 @@
-C51 COMPILER V9.60.0.0   PWM                                                               03/23/2021 11:18:39 PAGE 1   
+C51 COMPILER V9.60.0.0   PWM                                                               04/01/2021 15:38:08 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PWM
 OBJECT MODULE PLACED IN .\Objects\PWM.obj
 COMPILER INVOKED BY: D:\Keil\C51\c51v960a\C51\BIN\C51.EXE HARDWARE\PWM\PWM.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAIN;.\de
-                    -lay;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC) DEBUG OBJECTEXTEND PRINT(.\Listing
-                    -s\PWM.lst) TABS(2) OBJECT(.\Objects\PWM.obj)
+                    -lay;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR) DEBU
+                    -G OBJECTEXTEND PRINT(.\Listings\PWM.lst) TABS(2) OBJECT(.\Objects\PWM.obj)
 
 line level    source
 
@@ -16,119 +16,127 @@ line level    source
    5          u8 Freq_Parm = 2;
    6          u8 Freq_KEY;
    7          
-   8          void Fore_XS()
-   9          {
-  10   1        //    PWMSET= 0x00;                                //使能PWM模块
-  11   1        P2M1 = 0x00;
-  12   1        P2M0 = 0x03; //设置P20.P21为推挽输出
-  13   1        PWM15_PWM2_Enable();
-  14   1        P_SW2 = 0x80;
-  15   1        PWM2CKS = 0x00; // PWM时钟为系统时钟
-  16   1        switch (Freq_Parm)
-  17   1        {
-  18   2          //----6.5KHZ---------------------------------240000
-  19   2        case 1:
-  20   2          PWM2C = 0xE64;    //设置PWM周期为0800H个PWM时钟
-  21   2          PWM20T2 = 0x0720; //PWM0在计数值为700H地方输出高电平
-  22   2          PWM20T1 = 0x0ABE; //PWM0在计数值为100H地方输出低电平
-  23   2      
-  24   2          PWM21T2 = 0x0000; //PWM1在计数值为0080H地方输出高电平
-  25   2          PWM21T1 = 0x0390; //PWM1在计数值为0780H地方输出低电平
-  26   2          Freq_KEY = 0;
-  27   2          break;
-  28   2          //----6.8KHZ---------------------------------
-  29   2        case 2:
-  30   2          PWM2C = 0xDC6;
-  31   2          PWM20T2 = 0x06D9;
-  32   2          PWM20T1 = 0x0A4F;
-  33   2          PWM21T2 = 0x0000;
-  34   2          PWM21T1 = 0x0370;
-  35   2          Freq_KEY = 1;
-  36   2          break;
-  37   2          //----7.1KHZ---------------------------------
-  38   2        case 3:
-  39   2          PWM2C = 0xD31;
-  40   2          PWM20T2 = 0x0699;
-  41   2          PWM20T1 = 0x09F0;
-  42   2          PWM21T2 = 0x0000;
-  43   2          PWM21T1 = 0x034A;
-  44   2          break;
-  45   2          //----7.4KHZ---------------------------------
-  46   2        case 4:
-  47   2          PWM2C = 0xCA6;
-  48   2          PWM20T2 = 0x0649;
-  49   2          PWM20T1 = 0x0980;
-  50   2          PWM21T2 = 0x0000;
-  51   2          PWM21T1 = 0x032A;
-  52   2          break;
-  53   2          //----7.7KHZ---------------------------------
-C51 COMPILER V9.60.0.0   PWM                                                               03/23/2021 11:18:39 PAGE 2   
+   8          /**
+   9           * @brief  频率设置
+  10           * @note   
+  11           * @retval None
+  12           */
+  13          void Fore_XS()
+  14          {
+  15   1        //    PWMSET= 0x00;                                //使能PWM模块
+  16   1        P2M1 = 0x00;
+  17   1        P2M0 = 0x03; //设置P20.P21为推挽输出
+  18   1        PWM15_PWM2_Enable();
+  19   1        P_SW2 = 0x80;
+  20   1        PWM2CKS = 0x00; // PWM时钟为系统时钟
+  21   1        switch (Freq_Parm)                 
+  22   1        {
+  23   2          //----6.5KHZ---------------------------------240000
+  24   2        case 1:
+  25   2          PWM2C = 0xE6C;    //设置PWM周期为0800H个PWM时钟
+  26   2          PWM20T2 = 0x0720; //PWM0在计数值为720H地方输出高电平
+  27   2          PWM20T1 = 0x0ABE; //PWM0在计数值为ABEH地方输出低电平
+  28   2          PWM21T2 = 0x0000; //PWM1在计数值为0000H地方输出高电平
+  29   2          PWM21T1 = 0x0390; //PWM1在计数值为0390H地方输出低电平
+  30   2          Freq_KEY = 0;
+  31   2          break;
+  32   2          //----6.8KHZ---------------------------------
+  33   2        case 2:
+  34   2          PWM2C = 0xDC6;
+  35   2          PWM20T2 = 0x06D9;
+  36   2          PWM20T1 = 0x0A4F;
+  37   2          PWM21T2 = 0x0000;
+  38   2          PWM21T1 = 0x0370;
+  39   2          Freq_KEY = 1;
+  40   2          break;
+  41   2          //----7.1KHZ---------------------------------
+  42   2        case 3:
+  43   2          PWM2C = 0xD31;
+  44   2          PWM20T2 = 0x0699;
+  45   2          PWM20T1 = 0x09F0;
+  46   2          PWM21T2 = 0x0000;
+  47   2          PWM21T1 = 0x034A;
+  48   2          break;
+  49   2          //----7.4KHZ---------------------------------
+  50   2        case 4:
+  51   2          PWM2C = 0xCA6;
+  52   2          PWM20T2 = 0x0649;
+  53   2          PWM20T1 = 0x0980;
+C51 COMPILER V9.60.0.0   PWM                                                               04/01/2021 15:38:08 PAGE 2   
 
-  54   2        case 5:
-  55   2          PWM2C = 0xC26;
-  56   2          PWM20T2 = 0x0619;
-  57   2          PWM20T1 = 0x0920;
-  58   2          PWM21T2 = 0x0000;
-  59   2          PWM21T1 = 0x030A;
-  60   2          break;
-  61   2          //----8.0KHZ---------------------------------
-  62   2        case 6:
-  63   2          PWM2C = 0xBB5;
-  64   2          PWM20T2 = 0x05E0;
-  65   2          PWM20T1 = 0x08CA;
-  66   2          PWM21T2 = 0x0000;
-  67   2          PWM21T1 = 0x02F0;
-  68   2          Freq_KEY = 0;
-  69   2          break;
-  70   2          //----8.3KHZ---------------------------------
-  71   2        case 7:
-  72   2          PWM2C = 0xB4B;
-  73   2          PWM20T2 = 0x05AE;
-  74   2          PWM20T1 = 0x086A;
-  75   2          PWM21T2 = 0x0000;
-  76   2          PWM21T1 = 0x02D0;
-  77   2          break;
-  78   2          //----8.6KHZ---------------------------------
-  79   2        case 8:
-  80   2          PWM2C = 0xAE4;
-  81   2          PWM20T2 = 0x058E;
-  82   2          PWM20T1 = 0x083A;
-  83   2          PWM21T2 = 0x0000;
-  84   2          PWM21T1 = 0x02C0;
-  85   2      
-  86   2          break;
-  87   2          //----8.9KHZ---------------------------------
-  88   2        case 9:
-  89   2          PWM2C = 0xA85;
-  90   2          PWM20T2 = 0x054E;
-  91   2          PWM20T1 = 0x07F0;
-  92   2          PWM21T2 = 0x0000;
-  93   2          PWM21T1 = 0x02B0;
-  94   2          Freq_KEY = 0;
-  95   2          break;
-  96   2        }
-  97   1        PWM20CR = 0x80; //使能PWM0输出
-  98   1        PWM21CR = 0x80; //使能PWM1输出
-  99   1        P_SW2 = 0x00;
- 100   1      }
- 101          
- 102          //----红外发射----------------
- 103          void IR_Fore()
- 104          {
- 105   1        P3M1 = 0x00;
- 106   1        P3M0 = 0x08;     //设置P33为推挽输出
- 107   1        PWM15_PWM3_Enable(); //使能PWM模块
- 108   1        P_SW2 = 0x80;
- 109   1        PWM3CKS = 0x00; // PWM时钟为系统时钟
- 110   1        PWM3C = 0x1880;   //设置PWM周期为0800H个PWM时钟
- 111   1        PWM33T1 = 0x0100; //PWM3在计数值为700H地方输出低电平
- 112   1        PWM33T2 = 0x0CFF; //PWM3在计数值为100H地方输出高电平
- 113   1        PWM33CR = 0x80;   //使能PWM0输出
- 114   1        P_SW2 = 0x00;
- 115   1        PWMCFG23 = 0x11;
-C51 COMPILER V9.60.0.0   PWM                                                               03/23/2021 11:18:39 PAGE 3   
+  54   2          PWM21T2 = 0x0000;
+  55   2          PWM21T1 = 0x032A;
+  56   2          break;
+  57   2          //----7.7KHZ---------------------------------
+  58   2        case 5:
+  59   2          PWM2C = 0xC26;
+  60   2          PWM20T2 = 0x0619;
+  61   2          PWM20T1 = 0x0920;
+  62   2          PWM21T2 = 0x0000;
+  63   2          PWM21T1 = 0x030A;
+  64   2          break;
+  65   2          //----8.0KHZ---------------------------------
+  66   2        case 6:
+  67   2          PWM2C = 0xBB5;
+  68   2          PWM20T2 = 0x05E0;
+  69   2          PWM20T1 = 0x08CA;
+  70   2          PWM21T2 = 0x0000;
+  71   2          PWM21T1 = 0x02F0;
+  72   2          Freq_KEY = 0;
+  73   2          break;
+  74   2          //----8.3KHZ---------------------------------
+  75   2        case 7:
+  76   2          PWM2C = 0xB4B;
+  77   2          PWM20T2 = 0x05AE;
+  78   2          PWM20T1 = 0x086A;
+  79   2          PWM21T2 = 0x0000;
+  80   2          PWM21T1 = 0x02D0;
+  81   2          break;
+  82   2          //----8.6KHZ---------------------------------
+  83   2        case 8:
+  84   2          PWM2C = 0xAE4;
+  85   2          PWM20T2 = 0x058E;
+  86   2          PWM20T1 = 0x083A;
+  87   2          PWM21T2 = 0x0000;
+  88   2          PWM21T1 = 0x02C0;
+  89   2          break;
+  90   2          //----8.9KHZ---------------------------------
+  91   2        case 9:
+  92   2          PWM2C = 0xA85;
+  93   2          PWM20T2 = 0x054E;
+  94   2          PWM20T1 = 0x07F0;
+  95   2          PWM21T2 = 0x0000;
+  96   2          PWM21T1 = 0x02B0;
+  97   2          Freq_KEY = 0;
+  98   2          break;
+  99   2        }
+ 100   1        PWM20CR = 0x80; //使能PWM0输出
+ 101   1        PWM21CR = 0x80; //使能PWM1输出
+ 102   1        P_SW2 = 0x00;
+ 103   1      }
+ 104          
+ 105          /**
+ 106           * @brief  红外发射
+ 107           * @note   
+ 108           * @retval None
+ 109           */
+ 110          void IR_Fore()
+ 111          {
+ 112   1        P3M1 = 0x00;
+ 113   1        P3M0 = 0x08;       //设置P33为推挽输出
+ 114   1        PWM15_PWM3_Enable();  //使能PWM模块
+ 115   1        P_SW2 = 0x80;
+C51 COMPILER V9.60.0.0   PWM                                                               04/01/2021 15:38:08 PAGE 3   
 
- 116   1      }
+ 116   1        PWM3CKS = 0x00; // 时钟选择 （系统时钟）
+ 117   1        //38Khz
+ 118   1        PWM3C = 0x0274;      //PWM计数器寄存器 计算出输出频率
+ 119   1        PWM33T1 = 0x0100;   //PWM3在计数值为700H地方输出低电平
+ 120   1        PWM33T2 = 0x0240;   //PWM3在计数值为100H地方输出高电平
+ 121   1        PWM33CR = 0x80;    // (通道控制寄存器)使能PWM0输出 
+ 122   1        P_SW2 = 0x00;
+ 123   1        PWMCFG23 = 0x11;
+ 124   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

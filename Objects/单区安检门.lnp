@@ -4,6 +4,8 @@
 ".\Objects\PWM.obj",
 ".\Objects\EEPROM.obj",
 ".\Objects\GUI.obj",
-".\Objects\ADC.obj" 
+".\Objects\ADC.obj",
+".\Objects\uart.obj",
+".\Objects\IR.obj" 
 TO ".\Objects\单区安检门" 
 PRINT(".\Listings\单区安检门.m51") RAMSIZE(256) 

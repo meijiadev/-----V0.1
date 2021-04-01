@@ -1,0 +1,64 @@
+C51 COMPILER V9.60.0.0   IR                                                                04/01/2021 17:23:01 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE IR
+OBJECT MODULE PLACED IN .\Objects\IR.obj
+COMPILER INVOKED BY: D:\Keil\C51\c51v960a\C51\BIN\C51.EXE HARDWARE\IR\IR.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAIN;.\dela
+                    -y;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR) DEBUG 
+                    -OBJECTEXTEND PRINT(.\Listings\IR.lst) TABS(2) OBJECT(.\Objects\IR.obj)
+
+line level    source
+
+   1          #include "STC8G.h"
+   2          #include "main.h"
+   3          #include "IR.h"
+   4          #include "uart.h"
+   5          #include "AIP650.h"
+   6          #include "ADC.h"
+   7          
+   8          u8 IR_ON=0;           //红外开关标志
+   9          extern u16 PEOPLE_NUMBER;         //人数量
+  10          u8 IR_ONM = 0;      //红外开关计数
+  11              
+  12          /**
+  13           * @brief  红外接收
+  14           * @note   
+  15           * @retval None
+  16           */
+  17          void IRCheck()
+  18          {
+  19   1        
+  20   1        // 有一个红外检测到有人并且标志位是关闭的
+  21   1        if ((IR1==0||IR2==0)&&IR_ON==0)
+  22   1        {
+  23   2         UartSend((u8)IR2);     //有人进入安检门
+  24   2         IR_ON=1;  //以防在同一个人的情况下多次进入循环
+  25   2         PEOPLE_NUMBER++;
+  26   2        }
+  27   1        if(IR1==1&&IR2==1&&IR_ON==1)
+  28   1        {
+  29   2          IR_ONM++;
+  30   2          if (IR_ONM>100)
+  31   2          {
+  32   3            IR_ONM=0;
+  33   3            IR_ON=0;//当未检测到人时不会一直进入到此条件语句
+  34   3            UartSend((u8)IR2);  //离开安检门  
+  35   3          }
+  36   2        }
+  37   1      }
+  38          
+*** WARNING C316 IN LINE 38 OF HARDWARE\IR\IR.c: unterminated conditionals
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     66    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

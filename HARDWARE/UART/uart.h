@@ -1,5 +1,6 @@
-#ifndef _uart_h_
-#define _uart_h_
+#ifndef _UART_H_
+#define _UART_H_
 
-//----频率定义------------------------------------------------
-#define MAIN_Fosc		24000000	                 //定义主时钟
+
+void UartInit();
+void UartSend(u8 dat);

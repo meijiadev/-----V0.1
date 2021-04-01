@@ -324,7 +324,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\MAIN;.\delay;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC</IncludePath>
+              <IncludePath>.\MAIN;.\delay;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -415,6 +415,26 @@
               <FileName>ADC.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\HARDWARE\ADC\ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HARDWARE\UART\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\HARDWARE\UART\uart.h</FilePath>
+            </File>
+            <File>
+              <FileName>IR.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\HARDWARE\IR\IR.c</FilePath>
+            </File>
+            <File>
+              <FileName>IR.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\HARDWARE\IR\IR.h</FilePath>
             </File>
           </Files>
         </Group>

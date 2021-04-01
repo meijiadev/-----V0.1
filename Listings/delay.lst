@@ -1,11 +1,11 @@
-C51 COMPILER V9.60.0.0   DELAY                                                             03/23/2021 11:15:14 PAGE 1   
+C51 COMPILER V9.60.0.0   DELAY                                                             03/27/2021 10:20:04 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DELAY
 OBJECT MODULE PLACED IN .\Objects\delay.obj
 COMPILER INVOKED BY: D:\Keil\C51\c51v960a\C51\BIN\C51.EXE delay\delay.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAIN;.\delay;.
-                    -\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC) DEBUG OBJECTEXTEND PRINT(.\Listings\del
-                    -ay.lst) TABS(2) OBJECT(.\Objects\delay.obj)
+                    -\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR) DEBUG OBJ
+                    -ECTEXTEND PRINT(.\Listings\delay.lst) TABS(2) OBJECT(.\Objects\delay.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   51          /*
   52          void delay1ms(u16 ms)
   53          {
-C51 COMPILER V9.60.0.0   DELAY                                                             03/23/2021 11:15:14 PAGE 2   
+C51 COMPILER V9.60.0.0   DELAY                                                             03/27/2021 10:20:04 PAGE 2   
 
   54           u16 m;
   55           for(m=0;m<ms;m++)
@@ -126,7 +126,7 @@ line level    source
  113            {    
  114              for(i=0;i<1100;i++);   
  115            }  
-C51 COMPILER V9.60.0.0   DELAY                                                             03/23/2021 11:15:14 PAGE 3   
+C51 COMPILER V9.60.0.0   DELAY                                                             03/27/2021 10:20:04 PAGE 3   
 
  116          }
  117          */

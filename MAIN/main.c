@@ -7,9 +7,11 @@
 #include "PWM.h"
 #include "GUI.h"
 #include "EEPROM.h"
-#include "adc.h"
+#include "ADC.h"
+#include "uart.h"
+#include "IR.h"
 
-extern u8 menu; //菜单
+extern u8 menuFlag; //菜单
 
 /********************************
 功能描述：IO口初始化
@@ -49,14 +51,19 @@ void main()
 	Light_Level_Set_1(6);
 	EEPROM_init();
 	adc_init(ADC_SYSclk_DIV_2); //初始化ADC,P1.0通道 ，ADC时钟频率：SYSclk/2
-	menu = 0;
+	menuFlag = 0;
+	UartInit();
 	while (1)
 	{
-		meun_UI();
-		KEY_CL();         
+		menuUI();
+		KEY_CL();        
+		if (menuFlag==0)
+		{
+		IRCheck();
 		Fore_XS();        
 		IR_Fore();
 		ADC();
+		}
 		//Delay_ms(1000);
 	}
 }
