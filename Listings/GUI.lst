@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 1   
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GUI
@@ -22,539 +22,551 @@ line level    source
   11          extern u8 Freq_Parm;    //∆µ¬ 
   12          extern u16 ALARM_NUMBER;  //±®æØ»À ˝
   13          extern u16 PEOPLE_NUMBER; //æ≠π˝»À ˝
-  14          u8 menuFlag = 0;      //≤Àµ•±Í÷æ      0:Œ¥µ„ª˜∞¥º¸«∞µƒ—˘◊”  1£∫ ‰»Î√‹¬Î    2:¡È√Ù∂»µ˜Ω⁄  3£∫∆µ¬ µ˜Ω⁄ 4:√‹¬Î÷
-             -ÿ÷√
-  15          u8 psDigits = 0;      //’˝‘⁄–ﬁ∏ƒµƒ√‹¬ÎŒª ˝
-  16          u8 flash_flag = 0;      //…¡À∏±Í÷æ
-  17          u8 flash_M = 0;       //…¡À∏º∆ ˝
-  18          u8 freqFlag = 0;      //œ‘ æ∆µ¬ 
-  19          
-  20          u8 dB; //¡È√Ù∂»
-  21          //--------±£¥ÊEEPROM÷–µƒ√‹¬Î-------------
-  22          u8 mima1 = 0;
-  23          u8 mima2 = 0;
-  24          u8 mima3 = 0;
-  25          u8 mima4 = 0;
-  26          //-------- ‰»Î√‹¬Î-------------
-  27          u8 mima5 = 1;
-  28          u8 mima6 = 2;
-  29          u8 mima7 = 3;
-  30          u8 mima8 = 4;
-  31          
-  32          /**
-  33           * @brief  ≤Àµ•UI
-  34           * @note   
-  35           * @retval None
-  36           */
-  37          void menuUI()
-  38          {
-  39   1        switch (menuFlag)
-  40   1        {
-  41   2        case 0:
-  42   2          psDigits = 0;
-  43   2          if (freqFlag == 1)
-  44   2          {
-  45   3            //œ‘ æ∆µ¬ 
-  46   3            AiP650_Set(0x68, DISPLAY_CODE[16]); //F
-  47   3            AiP650_Set(0x6A, DISPLAY_CODE[10]);
-  48   3            AiP650_Set(0x6C, DISPLAY_CODE[Freq_Parm % 100 / 10]);
-  49   3            AiP650_Set(0x6E, DISPLAY_CODE[Freq_Parm % 10]);
-  50   3            delay_ms(1000);
-  51   3          }
-  52   2          else
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 2   
+  14          extern u8 alarmLine;
+  15          u8 menuFlag = 0;      //≤Àµ•±Í÷æ      0:Œ¥µ„ª˜∞¥º¸«∞µƒ—˘◊”  1£∫ ‰»Î√‹¬Î    2:¡È√Ù∂»µ˜Ω⁄   4:√‹¬Î÷ÿ÷√
+  16          u8 psDigits = 0;      //’˝‘⁄–ﬁ∏ƒµƒ√‹¬ÎŒª ˝
+  17          u8 flash_flag = 0;      //…¡À∏±Í÷æ
+  18          u8 flash_M = 0;       //…¡À∏º∆ ˝
+  19          u8 voiceFlag = 0; // ∑‰√˘∆˜ø™πÿ 0£∫ø™ 1£∫πÿ
+  20          
+  21          u8 dB; //¡È√Ù∂»
+  22          //--------±£¥ÊEEPROM÷–µƒ√‹¬Î-------------
+  23          u8 mima1 = 0;
+  24          u8 mima2 = 0;
+  25          u8 mima3 = 0;
+  26          u8 mima4 = 0;
+  27          //-------- ‰»Î√‹¬Î-------------
+  28          u8 mima5 = 1;
+  29          u8 mima6 = 2;
+  30          u8 mima7 = 3;
+  31          u8 mima8 = 4;
+  32          
+  33          /**
+  34           * @brief  ≤Àµ•UI
+  35           * @note   
+  36           * @retval None
+  37           */
+  38          void menuUI()
+  39          {
+  40   1        switch (menuFlag)
+  41   1        {
+  42   2        case 0:
+  43   2          psDigits = 0;
+  44   2          AiP650_DisPlayFour(PEOPLE_NUMBER);
+  45   2          AiP650_DisPlayFour_1(ALARM_NUMBER);
+  46   2          break;
+  47   2        case 1:
+  48   2          passwordUI();
+  49   2          break;
+  50   2        case 2:
+  51   2          dBShow();
+  52   2          psDigits = 0;
+  53   2          break;
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 2   
 
-  53   2          {
-  54   3            AiP650_DisPlayFour(PEOPLE_NUMBER);
-  55   3            AiP650_DisPlayFour_1(ALARM_NUMBER);
-  56   3          }
-  57   2          break;
-  58   2        case 1:
-  59   2          passwordUI();
+  54   2        case 3:
+  55   2          //œ‘ æ∆µ¬ 
+  56   2          AiP650_Set(0x68, DISPLAY_CODE[16]); //F
+  57   2          AiP650_Set(0x6A, DISPLAY_CODE[10]);
+  58   2          AiP650_Set(0x6C, DISPLAY_CODE[Freq_Parm % 100 / 10]);
+  59   2          AiP650_Set(0x6E, DISPLAY_CODE[Freq_Parm % 10]);
   60   2          break;
-  61   2        case 2:
-  62   2          dBShow();
-  63   2          psDigits = 0;
-  64   2          break;
-  65   2        case 3:
-  66   2          break;
-  67   2        case 4:
-  68   2          passwordUI();
-  69   2          break;
-  70   2        default:
-  71   2          break;
-  72   2        }
-  73   1      }
-  74          
-  75          /**
-  76           * @brief  √‹¬Îœ‘ æ“≥
-  77           * @note   
-  78           * @retval None
-  79           */
-  80          void passwordUI()
-  81          {
-  82   1        /*********** ˝¬Îπ‹µ„…¡À∏±Í÷æ-start***********/
-  83   1        flash_M++;
-  84   1        if (flash_M < 120)
-  85   1        {
-  86   2          flash_flag = 1;
-  87   2        }
-  88   1        if (flash_M > 120)
-  89   1        {
-  90   2          flash_flag = 0;
-  91   2        }
-  92   1        if (flash_M == 240)
-  93   1        {
-  94   2          flash_M = 0;
-  95   2        }
-  96   1        /****************-end*******************/
-  97   1      
-  98   1        AiP650_Set_1(0x68, DISPLAY_CODE[mima5]);
-  99   1        AiP650_Set_1(0x6A, DISPLAY_CODE[mima6]);
- 100   1        AiP650_Set_1(0x6C, DISPLAY_CODE[mima7]);
- 101   1        AiP650_Set_1(0x6E, DISPLAY_CODE[mima8]);
- 102   1        switch (psDigits)
- 103   1        {
- 104   2        case 0:
- 105   2          switch (flash_flag)
- 106   2          {
- 107   3          case 0:
- 108   3            AiP650_Set_1(0x68, DISPLAY_CODE[mima5]);
- 109   3            break;
- 110   3          case 1: //µ±flage±‰≥…1 ± µ„¡¡ ˝◊÷≈‘µƒµ„
- 111   3            AiP650_Set_1(0x68, DISPLAY_CODE[mima5] | 0x80);
- 112   3            break;
- 113   3          default:
- 114   3            break;
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 3   
+  61   2        case 4:
+  62   2          passwordUI();
+  63   2          break;
+  64   2        default:
+  65   2          break;
+  66   2        }
+  67   1      }
+  68          
+  69          /**
+  70           * @brief  √‹¬Îœ‘ æ“≥
+  71           * @note   
+  72           * @retval None
+  73           */
+  74          void passwordUI()
+  75          {
+  76   1        /*********** ˝¬Îπ‹µ„…¡À∏±Í÷æ-start***********/
+  77   1        flash_M++;
+  78   1        if (flash_M < 120)
+  79   1        {
+  80   2          flash_flag = 1;
+  81   2        }
+  82   1        if (flash_M > 120)
+  83   1        {
+  84   2          flash_flag = 0;
+  85   2        }
+  86   1        if (flash_M == 240)
+  87   1        {
+  88   2          flash_M = 0;
+  89   2        }
+  90   1        /****************-end*******************/
+  91   1      
+  92   1        AiP650_Set_1(0x68, DISPLAY_CODE[mima5]);
+  93   1        AiP650_Set_1(0x6A, DISPLAY_CODE[mima6]);
+  94   1        AiP650_Set_1(0x6C, DISPLAY_CODE[mima7]);
+  95   1        AiP650_Set_1(0x6E, DISPLAY_CODE[mima8]);
+  96   1        switch (psDigits)
+  97   1        {
+  98   2        case 0:
+  99   2          switch (flash_flag)
+ 100   2          {
+ 101   3          case 0:
+ 102   3            AiP650_Set_1(0x68, DISPLAY_CODE[mima5]);
+ 103   3            break;
+ 104   3          case 1: //µ±flage±‰≥…1 ± µ„¡¡ ˝◊÷≈‘µƒµ„
+ 105   3            AiP650_Set_1(0x68, DISPLAY_CODE[mima5] | 0x80);
+ 106   3            break;
+ 107   3          default:
+ 108   3            break;
+ 109   3          }
+ 110   2          break;
+ 111   2          break;
+ 112   2        case 1:
+ 113   2          switch (flash_flag)
+ 114   2          {
+ 115   3          case 0:
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 3   
 
- 115   3          }
- 116   2          break;
- 117   2          break;
- 118   2        case 1:
- 119   2          switch (flash_flag)
- 120   2          {
- 121   3          case 0:
- 122   3            AiP650_Set_1(0x6A, DISPLAY_CODE[mima6]);
- 123   3            break;
- 124   3          case 1:
- 125   3            AiP650_Set_1(0x6A, DISPLAY_CODE[mima6] | 0x80);
- 126   3            break;
- 127   3          default:
- 128   3            break;
- 129   3          }
- 130   2          break;
- 131   2          break;
- 132   2        case 2:
- 133   2          switch (flash_flag)
- 134   2          {
- 135   3          case 0:
- 136   3            AiP650_Set_1(0x6C, DISPLAY_CODE[mima7]);
- 137   3            break;
- 138   3          case 1:
- 139   3            AiP650_Set_1(0x6C, DISPLAY_CODE[mima7] | 0x80);
- 140   3            break;
- 141   3          default:
- 142   3            break;
- 143   3          }
- 144   2          break;
- 145   2        case 3:
- 146   2          switch (flash_flag)
- 147   2          {
- 148   3          case 0:
- 149   3            AiP650_Set_1(0x6E, DISPLAY_CODE[mima8]);
- 150   3            break;
- 151   3          case 1:
- 152   3            AiP650_Set_1(0x6E, DISPLAY_CODE[mima8] | 0x80);
- 153   3            break;
- 154   3          default:
- 155   3            break;
- 156   3          }
- 157   2          break;
- 158   2      
- 159   2        default:
- 160   2          break;
- 161   2        }
- 162   1      }
- 163          
- 164          /**
- 165           * @brief  ‘ˆº”º¸µƒµ„ª˜ ¬º˛¥¶¿Ì∫Ø ˝
- 166           * @note   
- 167           * @retval None
- 168           */
- 169          void add()
- 170          {
- 171   1        switch (menuFlag)
- 172   1        {
- 173   2        case 0:
- 174   2            freqFlag=1;
- 175   2          Freq_Parm++;
- 176   2          if (Freq_Parm > 9)
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 4   
+ 116   3            AiP650_Set_1(0x6A, DISPLAY_CODE[mima6]);
+ 117   3            break;
+ 118   3          case 1:
+ 119   3            AiP650_Set_1(0x6A, DISPLAY_CODE[mima6] | 0x80);
+ 120   3            break;
+ 121   3          default:
+ 122   3            break;
+ 123   3          }
+ 124   2          break;
+ 125   2          break;
+ 126   2        case 2:
+ 127   2          switch (flash_flag)
+ 128   2          {
+ 129   3          case 0:
+ 130   3            AiP650_Set_1(0x6C, DISPLAY_CODE[mima7]);
+ 131   3            break;
+ 132   3          case 1:
+ 133   3            AiP650_Set_1(0x6C, DISPLAY_CODE[mima7] | 0x80);
+ 134   3            break;
+ 135   3          default:
+ 136   3            break;
+ 137   3          }
+ 138   2          break;
+ 139   2        case 3:
+ 140   2          switch (flash_flag)
+ 141   2          {
+ 142   3          case 0:
+ 143   3            AiP650_Set_1(0x6E, DISPLAY_CODE[mima8]);
+ 144   3            break;
+ 145   3          case 1:
+ 146   3            AiP650_Set_1(0x6E, DISPLAY_CODE[mima8] | 0x80);
+ 147   3            break;
+ 148   3          default:
+ 149   3            break;
+ 150   3          }
+ 151   2          break;
+ 152   2      
+ 153   2        default:
+ 154   2          break;
+ 155   2        }
+ 156   1      }
+ 157          
+ 158          /**
+ 159           * @brief  ‘ˆº”º¸µƒµ„ª˜ ¬º˛¥¶¿Ì∫Ø ˝
+ 160           * @note   
+ 161           * @retval None
+ 162           */
+ 163          void add()
+ 164          {
+ 165   1        switch (menuFlag)
+ 166   1        {
+ 167   2        case 0:
+ 168   2          menuFlag = 3;
+ 169   2          UartSend(Freq_Parm);
+ 170   2          break;
+ 171   2          //---√‹¬Îµ˜Ω⁄---------------------------------
+ 172   2        case 1:
+ 173   2          switch (psDigits)
+ 174   2          {
+ 175   3          case 0:
+ 176   3            mima5++;
+ 177   3            if (mima5 > 9)
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 4   
 
- 177   2            Freq_Parm = 1;
- 178   2          break;
- 179   2          //---√‹¬Îµ˜Ω⁄---------------------------------
- 180   2        case 1:
- 181   2          switch (psDigits)
- 182   2          {
- 183   3          case 0:
- 184   3            mima5++;
- 185   3            if (mima5 > 9)
- 186   3              mima5 = 0;
- 187   3            break;
- 188   3          case 1:
- 189   3            mima6++;
- 190   3            if (mima6 > 9)
- 191   3              mima6 = 0;
- 192   3            break;
- 193   3          case 2:
- 194   3            mima7++;
- 195   3            if (mima7 > 9)
- 196   3              mima7 = 0;
- 197   3            break;
- 198   3          case 3:
- 199   3            mima8++;
- 200   3            if (mima8 > 9)
- 201   3              mima8 = 0;
- 202   3            break;
- 203   3          }
- 204   2          break;
- 205   2          //---¡È√Ù∂»µ˜Ω⁄---------------------------------
- 206   2        case 2:
- 207   2          dB++;
- 208   2          if (dB > 100)
- 209   2            dB = 1;
- 210   2          break;
- 211   2          //---∆µ¬ µ˜Ω⁄---------------------------------
- 212   2        case 3:
- 213   2          Freq_Parm++;
- 214   2          if (Freq_Parm > 9)
- 215   2            Freq_Parm = 1;
- 216   2          break;
- 217   2        case 4:
- 218   2          //√‹¬Î÷ÿ÷√
- 219   2          switch (psDigits)
- 220   2          {
- 221   3          case 0:
- 222   3            mima5++;
- 223   3            if (mima5 > 9)
- 224   3              mima5 = 0;
- 225   3            break;
- 226   3          case 1:
- 227   3            mima6++;
- 228   3            if (mima6 > 9)
- 229   3              mima6 = 0;
- 230   3            break;
- 231   3          case 2:
- 232   3            mima7++;
- 233   3            if (mima7 > 9)
- 234   3              mima7 = 0;
- 235   3            break;
- 236   3          case 3:
- 237   3            mima8++;
- 238   3            if (mima8 > 9)
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 5   
+ 178   3              mima5 = 0;
+ 179   3            break;
+ 180   3          case 1:
+ 181   3            mima6++;
+ 182   3            if (mima6 > 9)
+ 183   3              mima6 = 0;
+ 184   3            break;
+ 185   3          case 2:
+ 186   3            mima7++;
+ 187   3            if (mima7 > 9)
+ 188   3              mima7 = 0;
+ 189   3            break;
+ 190   3          case 3:
+ 191   3            mima8++;
+ 192   3            if (mima8 > 9)
+ 193   3              mima8 = 0;
+ 194   3            break;
+ 195   3          }
+ 196   2          break;
+ 197   2          //---¡È√Ù∂»µ˜Ω⁄---------------------------------
+ 198   2        case 2:
+ 199   2          dB++;
+ 200   2          if (dB > 100)
+ 201   2            dB = 1;
+ 202   2          break;
+ 203   2          //---∆µ¬ µ˜Ω⁄---------------------------------
+ 204   2        case 3:
+ 205   2          Freq_Parm++;
+ 206   2          if (Freq_Parm > 9)
+ 207   2            Freq_Parm = 1;
+ 208   2          break;
+ 209   2        case 4:
+ 210   2          //√‹¬Î÷ÿ÷√
+ 211   2          switch (psDigits)
+ 212   2          {
+ 213   3          case 0:
+ 214   3            mima5++;
+ 215   3            if (mima5 > 9)
+ 216   3              mima5 = 0;
+ 217   3            break;
+ 218   3          case 1:
+ 219   3            mima6++;
+ 220   3            if (mima6 > 9)
+ 221   3              mima6 = 0;
+ 222   3            break;
+ 223   3          case 2:
+ 224   3            mima7++;
+ 225   3            if (mima7 > 9)
+ 226   3              mima7 = 0;
+ 227   3            break;
+ 228   3          case 3:
+ 229   3            mima8++;
+ 230   3            if (mima8 > 9)
+ 231   3              mima8 = 0;
+ 232   3            break;
+ 233   3          }
+ 234   2          break;
+ 235   2        default:
+ 236   2          break;
+ 237   2        }
+ 238   1      }
+ 239          
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 5   
 
- 239   3              mima8 = 0;
- 240   3            break;
- 241   3          }
- 242   2          break;
- 243   2        default:
- 244   2          break;
- 245   2        }
- 246   1      }
- 247          
- 248          /**
- 249           * @brief  ºı…Ÿ∞¥º¸µƒ¥¶¿Ì ¬º˛
- 250           * @note   
- 251           * @retval None
- 252           */
- 253          void reduce()
- 254          {
- 255   1        switch (menuFlag)
- 256   1        {
- 257   2        case 0:
- 258   2          break;
- 259   2        case 1:
- 260   2          switch (psDigits)
- 261   2          {
- 262   3          case 0:
- 263   3            mima5--;
- 264   3            if (mima5 == 255)
- 265   3              mima5 = 9;
- 266   3            break;
- 267   3          case 1:
- 268   3            mima6--;
- 269   3            if (mima6 == 255)
- 270   3              mima6 = 9;
- 271   3            break;
- 272   3          case 2:
- 273   3            mima7--;
- 274   3            if (mima7 == 255)
- 275   3              mima7 = 9;
- 276   3            break;
- 277   3          case 3:
- 278   3            mima8--;
- 279   3            if (mima8 == 255)
- 280   3              mima8 = 9;
- 281   3            break;
- 282   3          }
- 283   2          break;
- 284   2        case 2:
- 285   2          dB--;
- 286   2          if (dB == 255)
- 287   2            dB = 99;
- 288   2          break;
- 289   2        case 3:
- 290   2          break;
- 291   2        case 4:
- 292   2          //√‹¬Î÷ÿ÷√
- 293   2          switch (psDigits)
- 294   2          {
- 295   3          case 0:
- 296   3            mima5++;
- 297   3            if (mima5 > 9)
- 298   3              mima5 = 0;
- 299   3            break;
- 300   3          case 1:
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 6   
+ 240          /**
+ 241           * @brief  ºı…Ÿ∞¥º¸µƒ¥¶¿Ì ¬º˛
+ 242           * @note   
+ 243           * @retval None
+ 244           */
+ 245          void reduce()
+ 246          {
+ 247   1        switch (menuFlag)
+ 248   1        {
+ 249   2        case 0:
+ 250   2          if (voiceFlag == 0)
+ 251   2          {
+ 252   3            voiceFlag = 1;
+ 253   3            LED6 = 0;
+ 254   3            delay_ms(1000);
+ 255   3            LED6 = 1;
+ 256   3          }
+ 257   2          else
+ 258   2          {
+ 259   3            voiceFlag = 0;
+ 260   3            BUZZ = 0;
+ 261   3            LED6 = 0;
+ 262   3            delay_ms(800);
+ 263   3            BUZZ = 1;
+ 264   3            LED6 = 1;
+ 265   3          }
+ 266   2          break;
+ 267   2        case 1:
+ 268   2          switch (psDigits)
+ 269   2          {
+ 270   3          case 0:
+ 271   3            mima5--;
+ 272   3            if (mima5 == 255)
+ 273   3              mima5 = 9;
+ 274   3            break;
+ 275   3          case 1:
+ 276   3            mima6--;
+ 277   3            if (mima6 == 255)
+ 278   3              mima6 = 9;
+ 279   3            break;
+ 280   3          case 2:
+ 281   3            mima7--;
+ 282   3            if (mima7 == 255)
+ 283   3              mima7 = 9;
+ 284   3            break;
+ 285   3          case 3:
+ 286   3            mima8--;
+ 287   3            if (mima8 == 255)
+ 288   3              mima8 = 9;
+ 289   3            break;
+ 290   3          }
+ 291   2          break;
+ 292   2        case 2:
+ 293   2          dB--;
+ 294   2          if (dB == 255)
+ 295   2            dB = 99;
+ 296   2          break;
+ 297   2        case 3:
+ 298   2          Freq_Parm--;
+ 299   2          if (Freq_Parm == 255)
+ 300   2            Freq_Parm = 9;
+ 301   2          break;
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 6   
 
- 301   3            mima6++;
- 302   3            if (mima6 > 9)
- 303   3              mima6 = 0;
- 304   3            break;
- 305   3          case 2:
- 306   3            mima7++;
- 307   3            if (mima7 > 9)
- 308   3              mima7 = 0;
- 309   3            break;
- 310   3          case 3:
- 311   3            mima8++;
- 312   3            if (mima8 > 9)
- 313   3              mima8 = 0;
- 314   3            break;
- 315   3          }
- 316   2          break;
- 317   2          break;
- 318   2        default:
- 319   2          break;
- 320   2        }
- 321   1      }
- 322          
- 323          /**
- 324           * @brief  »∑∂®∞¥º¸µƒ¥¶¿Ì ¬º˛
- 325           * @note   
- 326           * @retval None
- 327           */
- 328          void enter()
- 329          {
- 330   1        switch (menuFlag)
- 331   1        {
- 332   2        case 0:
- 333   2          break;
- 334   2        case 1:
- 335   2          if (psDigits == 3)
- 336   2          {
- 337   3            passwordCheck();
- 338   3          }
- 339   2          else
- 340   2          {
- 341   3            psDigits++;
- 342   3          }
+ 302   2        case 4:
+ 303   2          //√‹¬Î÷ÿ÷√
+ 304   2          switch (psDigits)
+ 305   2          {
+ 306   3          case 0:
+ 307   3            mima5--;
+ 308   3            if (mima5 == 255)
+ 309   3              mima5 = 9;
+ 310   3            break;
+ 311   3          case 1:
+ 312   3            mima6--;
+ 313   3            if (mima6 == 255)
+ 314   3              mima6 = 9;
+ 315   3            break;
+ 316   3          case 2:
+ 317   3            mima7--;
+ 318   3            if (mima7 == 255)
+ 319   3              mima7 = 9;
+ 320   3            break;
+ 321   3          case 3:
+ 322   3            mima8--;
+ 323   3            if (mima8 == 255)
+ 324   3              mima8 = 9;
+ 325   3            break;
+ 326   3          }
+ 327   2          break;
+ 328   2        default:
+ 329   2          break;
+ 330   2        }
+ 331   1      }
+ 332          
+ 333          /**
+ 334           * @brief  »∑∂®∞¥º¸µƒ¥¶¿Ì ¬º˛
+ 335           * @note   
+ 336           * @retval None
+ 337           */
+ 338          void enter()
+ 339          {
+ 340   1        switch (menuFlag)
+ 341   1        {
+ 342   2        case 0:
  343   2          break;
- 344   2        case 2:
- 345   2          break;
- 346   2        case 3:
- 347   2          break;
- 348   2        case 4:
- 349   2          if (psDigits == 3)
+ 344   2        case 1:
+ 345   2          if (psDigits == 3)
+ 346   2          {
+ 347   3            passwordCheck();
+ 348   3          }
+ 349   2          else
  350   2          {
- 351   3            resetPassword();
+ 351   3            psDigits++;
  352   3          }
- 353   2          else
- 354   2          {
- 355   3            psDigits++;
- 356   3          }
- 357   2          break;
- 358   2        default:
- 359   2          break;
- 360   2        }
- 361   1      }
- 362          
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 7   
+ 353   2          break;
+ 354   2        case 2:
+ 355   2          menuFlag = 0;
+ 356   2          alarmLine=60+(99-dB);
+ 357   2          saveeepro();
+ 358   2          break;
+ 359   2        case 3:
+ 360   2          menuFlag = 0;
+ 361   2          saveFreq(Freq_Parm);
+ 362   2          break;
+ 363   2        case 4:
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 7   
 
- 363          /**
- 364           * @brief  √‹¬Î–£—È
- 365           * @note   
- 366           * @retval None
- 367           */
- 368          void passwordCheck()
- 369          {
- 370   1        UartSend(mima1);
- 371   1        UartSend(mima2);
- 372   1        UartSend(mima3);
- 373   1        UartSend(mima4);
- 374   1        //-----≥¨º∂√‹¬Î≈–∂œ≥…π¶Ω¯»Î√‹¬Î÷ÿ÷√ª∑Ω⁄---------------------------------------------------
- 375   1        if (mima5 == 8 && mima6 == 8 && mima7 == 8 && mima8 == 8)
- 376   1        {
- 377   2          delay_ms(800);
- 378   2          menuFlag = 4; //Ω¯»Î√‹¬Î÷ÿ÷√ª∑Ω⁄
- 379   2          //CD_flag=4;ID1=0;
- 380   2          mima5 = 1;
- 381   2          mima6 = 1;
- 382   2          mima7 = 1;
- 383   2          mima8 = 1; //√‹¬Îœ‘ æ ˝◊÷÷ÿ÷√
- 384   2          psDigits = 0;
- 385   2        } //-----√‹¬Î≈–∂œ’˝»∑---------------------------------------------------
- 386   1        else if (mima5 == mima1 && mima6 == mima2 && mima7 == mima3 && mima8 == mima4)
- 387   1        {
- 388   2      
- 389   2          AiP650_Set_1(0x68, DISPLAY_CODE[13]);
- 390   2          checkResult();
- 391   2          delay_ms(800);
- 392   2          menuFlag = 2; //Ω¯»Î¡È√Ù∂»…Ë÷√
- 393   2        }
- 394   1        else
- 395   1        {
- 396   2          //√‹¬Î–£—È¥ÌŒÛ
- 397   2          AiP650_Set_1(0x68, DISPLAY_CODE[15]);
- 398   2          checkResult();
- 399   2          delay_ms(800);
- 400   2          menuFlag = 1;
- 401   2          mima5 = 1;
- 402   2          mima6 = 2;
- 403   2          mima7 = 3;
- 404   2          mima8 = 4; //√‹¬Îœ‘ æ ˝◊÷÷ÿ÷√
- 405   2          psDigits = 0;
- 406   2        }
- 407   1      }
- 408          /**
- 409           * @brief  ÷ÿ÷√√‹¬Î
- 410           * @note   
- 411           * @retval None
- 412           */
- 413          void resetPassword()
- 414          {
- 415   1        mima1 = mima5;
- 416   1        mima2 = mima6;
- 417   1        mima3 = mima7;
- 418   1        mima4 = mima8;
- 419   1        //±£¥Ê√‹¬Î
- 420   1        saveeepro();
- 421   1        Delay_ms(300);
- 422   1        menuFlag = 0; //√‹¬Î–ﬁ∏ƒÕÍ≥… ªÿµΩ ◊“≥
- 423   1        mima5 = 1;
- 424   1        mima6 = 2;
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 8   
+ 364   2          if (psDigits == 3)
+ 365   2          {
+ 366   3            resetPassword();
+ 367   3          }
+ 368   2          else
+ 369   2          {
+ 370   3            psDigits++;
+ 371   3          }
+ 372   2          break;
+ 373   2        default:
+ 374   2          break;
+ 375   2        }
+ 376   1      }
+ 377          
+ 378          /**
+ 379           * @brief  √‹¬Î–£—È
+ 380           * @note   
+ 381           * @retval None
+ 382           */
+ 383          void passwordCheck()
+ 384          {
+ 385   1        UartSend(mima1);
+ 386   1        UartSend(mima2);
+ 387   1        UartSend(mima3);
+ 388   1        UartSend(mima4);
+ 389   1        //-----≥¨º∂√‹¬Î≈–∂œ≥…π¶Ω¯»Î√‹¬Î÷ÿ÷√ª∑Ω⁄---------------------------------------------------
+ 390   1        if (mima5 == 8 && mima6 == 8 && mima7 == 8 && mima8 == 8)
+ 391   1        {
+ 392   2          delay_ms(800);
+ 393   2          menuFlag = 4; //Ω¯»Î√‹¬Î÷ÿ÷√ª∑Ω⁄
+ 394   2          //CD_flag=4;ID1=0;
+ 395   2          mima5 = 1;
+ 396   2          mima6 = 1;
+ 397   2          mima7 = 1;
+ 398   2          mima8 = 1; //√‹¬Îœ‘ æ ˝◊÷÷ÿ÷√
+ 399   2          psDigits = 0;
+ 400   2        } //-----√‹¬Î≈–∂œ’˝»∑---------------------------------------------------
+ 401   1        else if (mima5 == mima1 && mima6 == mima2 && mima7 == mima3 && mima8 == mima4)
+ 402   1        {
+ 403   2      
+ 404   2          AiP650_Set_1(0x68, DISPLAY_CODE[13]);
+ 405   2          checkResult();
+ 406   2          delay_ms(800);
+ 407   2          menuFlag = 2; //Ω¯»Î¡È√Ù∂»…Ë÷√
+ 408   2        }
+ 409   1        else
+ 410   1        {
+ 411   2          //√‹¬Î–£—È¥ÌŒÛ
+ 412   2          AiP650_Set_1(0x68, DISPLAY_CODE[15]);
+ 413   2          checkResult();
+ 414   2          delay_ms(800);
+ 415   2          menuFlag = 1;
+ 416   2          mima5 = 1;
+ 417   2          mima6 = 2;
+ 418   2          mima7 = 3;
+ 419   2          mima8 = 4; //√‹¬Îœ‘ æ ˝◊÷÷ÿ÷√
+ 420   2          psDigits = 0;
+ 421   2        }
+ 422   1      }
+ 423          /**
+ 424           * @brief  ÷ÿ÷√√‹¬Î
+ 425           * @note   
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 8   
 
- 425   1        mima7 = 3;
- 426   1        mima8 = 4;
- 427   1      }
- 428          
- 429          /**
- 430           * @brief  –£—ÈΩ·π˚µƒUIœ‘ æ
- 431           * @note   
- 432           * @retval None
- 433           */
- 434          void checkResult()
- 435          {
- 436   1        AiP650_Set_1(0x6A, DISPLAY_CODE[0]);
- 437   1        AiP650_Set_1(0x6C, DISPLAY_CODE[0]);
- 438   1        AiP650_Set_1(0x6E, DISPLAY_CODE[0]);
- 439   1      }
- 440          
- 441          /**
- 442           * @brief ¡È√Ù∂»œ‘ æ
- 443           * @note   
- 444           * @retval None
- 445           */
- 446          void dBShow()
- 447          {
- 448   1        AiP650_Set_1(0x68, DISPLAY_CODE[1]);
- 449   1        AiP650_Set_1(0x6A, DISPLAY_CODE[10]);
- 450   1        AiP650_Set_1(0x6c, DISPLAY_CODE[dB % 100 / 10]);
- 451   1        AiP650_Set_1(0x6e, DISPLAY_CODE[dB % 10]);
- 452   1      }
- 453          
- 454          
+ 426           * @retval None
+ 427           */
+ 428          void resetPassword()
+ 429          {
+ 430   1        mima1 = mima5;
+ 431   1        mima2 = mima6;
+ 432   1        mima3 = mima7;
+ 433   1        mima4 = mima8;
+ 434   1        //±£¥Ê√‹¬Î
+ 435   1        saveeepro();
+ 436   1        Delay_ms(300);
+ 437   1        menuFlag = 0; //√‹¬Î–ﬁ∏ƒÕÍ≥… ªÿµΩ ◊“≥
+ 438   1        mima5 = 1;
+ 439   1        mima6 = 2;
+ 440   1        mima7 = 3;
+ 441   1        mima8 = 4;
+ 442   1      }
+ 443          
+ 444          /**
+ 445           * @brief  –£—ÈΩ·π˚µƒUIœ‘ æ
+ 446           * @note   
+ 447           * @retval None
+ 448           */
+ 449          void checkResult()
+ 450          {
+ 451   1        AiP650_Set_1(0x6A, DISPLAY_CODE[0]);
+ 452   1        AiP650_Set_1(0x6C, DISPLAY_CODE[0]);
+ 453   1        AiP650_Set_1(0x6E, DISPLAY_CODE[0]);
+ 454   1      }
  455          
  456          /**
- 457           * @brief   ∞¥º¸…®√Ë--- π”√∞¥≈• ±ø™∆Ù
- 458           * @note   ∞¥≈•µÿ÷∑£∫ A-0x47,B-0x4F,C-0x57,D-0x5F,E-0x67,F-0x6F,G-0x77
- 459           * @retval 
+ 457           * @brief ¡È√Ù∂»œ‘ æ
+ 458           * @note   
+ 459           * @retval None
  460           */
- 461          u8 Scan_Key()
+ 461          void dBShow()
  462          {
- 463   1        u8 i;
- 464   1        u8 rekey;
- 465   1        I2CStart();
- 466   1        I2CWrByte(0x49); //∂¡∞¥º¸√¸¡Ó
- 467   1        I2Cask();
- 468   1        for (i = 0; i < 8; i++)
- 469   1        {
- 470   2          CLK_H;
- 471   2          rekey = rekey << 1;
- 472   2          if (DIO)
- 473   2          {
- 474   3            rekey++;
- 475   3          }
- 476   2          Delay_us(10);
- 477   2          CLK_L;
- 478   2        }
- 479   1        I2Cask();
- 480   1        I2CStop();
- 481   1        return (rekey);
- 482   1      }
- 483          
- 484          /**
- 485           * @brief  ∞¥º¸º‡Ã˝ ¬º˛
- 486           * @note   
-C51 COMPILER V9.60.0.0   GUI                                                               04/01/2021 19:45:08 PAGE 9   
+ 463   1        AiP650_Set_1(0x68, DISPLAY_CODE[1]);
+ 464   1        AiP650_Set_1(0x6A, DISPLAY_CODE[10]);
+ 465   1        AiP650_Set_1(0x6c, DISPLAY_CODE[dB % 100 / 10]);
+ 466   1        AiP650_Set_1(0x6e, DISPLAY_CODE[dB % 10]);
+ 467   1      }
+ 468          
+ 469          /**
+ 470           * @brief   ∞¥º¸…®√Ë--- π”√∞¥≈• ±ø™∆Ù
+ 471           * @note   ∞¥≈•µÿ÷∑£∫ A-0x47,B-0x4F,C-0x57,D-0x5F,E-0x67,F-0x6F,G-0x77
+ 472           * @retval 
+ 473           */
+ 474          u8 Scan_Key()
+ 475          {
+ 476   1        u8 i;
+ 477   1        u8 rekey;
+ 478   1        I2CStart();
+ 479   1        I2CWrByte(0x49); //∂¡∞¥º¸√¸¡Ó
+ 480   1        I2Cask();
+ 481   1        for (i = 0; i < 8; i++)
+ 482   1        {
+ 483   2          CLK_H;
+ 484   2          rekey = rekey << 1;
+ 485   2          if (DIO)
+ 486   2          {
+ 487   3            rekey++;
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 9   
 
- 487           * @retval None
- 488           */
- 489          void KEY_CL()
- 490          {
- 491   1        u8 KEY;
- 492   1        KEY = Scan_Key();
- 493   1        switch (KEY)
- 494   1        {
- 495   2          //K1   ≤Àµ•º¸ ----------------------------------------------------
- 496   2        case 0x47:
- 497   2          menuFlag++;
- 498   2          if (menuFlag > 4)
- 499   2          {
- 500   3            menuFlag = 0;
- 501   3          }
- 502   2          delay_ms(300);
- 503   2          break;
- 504   2          //K2    …Ë÷√+ -------------------------------------
- 505   2        case 0x4F:
- 506   2          add();
- 507   2          freqFlag=1;
- 508   2          delay_ms(300);
- 509   2          break;
- 510   2          //K3    …Ë÷√-   ----------------------------------------
- 511   2        case 0x57:
- 512   2          reduce();
- 513   2          delay_ms(300);
- 514   2          break;
- 515   2          //K4    »∑»œ  ----------------------------------------
- 516   2        case 0x5F: //K2
- 517   2          enter();
- 518   2          delay_ms(300);
- 519   2          break;
- 520   2        default:
- 521   2            freqFlag=0;
+ 488   3          }
+ 489   2          Delay_us(10);
+ 490   2          CLK_L;
+ 491   2        }
+ 492   1        I2Cask();
+ 493   1        I2CStop();
+ 494   1        return (rekey);
+ 495   1      }
+ 496          
+ 497          /**
+ 498           * @brief  ∞¥º¸º‡Ã˝ ¬º˛
+ 499           * @note   
+ 500           * @retval None
+ 501           */
+ 502          void KEY_CL()
+ 503          {
+ 504   1        u8 KEY;
+ 505   1        KEY = Scan_Key();
+ 506   1        switch (KEY)
+ 507   1        {
+ 508   2          //K1 ≤Àµ•º¸
+ 509   2        case 0x47:
+ 510   2          menuFlag++;
+ 511   2          if (menuFlag > 4)
+ 512   2          {
+ 513   3            menuFlag = 0;
+ 514   3          }
+ 515   2          delay_ms(300);
+ 516   2          break;
+ 517   2          //K2  …Ë÷√+
+ 518   2        case 0x4F:
+ 519   2          add();
+ 520   2          //freqFlag=1;
+ 521   2          delay_ms(300);
  522   2          break;
- 523   2        }
- 524   1      }
-*** WARNING C316 IN LINE 524 OF HARDWARE\GUI\GUI.c: unterminated conditionals
+ 523   2          //K3  …Ë÷√-
+ 524   2        case 0x57:
+ 525   2          reduce();
+ 526   2          delay_ms(300);
+ 527   2          break;
+ 528   2          //K4  »∑»œ
+ 529   2        case 0x5F: //K2
+ 530   2          enter();
+ 531   2          delay_ms(300);
+ 532   2          break;
+ 533   2        default:
+ 534   2          //freqFlag=0;
+ 535   2          break;
+ 536   2        }
+ 537   1      }
+*** WARNING C316 IN LINE 537 OF HARDWARE\GUI\GUI.c: unterminated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1196    ----
+   CODE SIZE        =   1206    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
@@ -562,6 +574,8 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
+
+C51 COMPILER V9.60.0.0   GUI                                                               04/02/2021 19:28:50 PAGE 10  
 
 
 C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

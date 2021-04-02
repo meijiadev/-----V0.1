@@ -52,7 +52,7 @@ void main()
 	EEPROM_init();
 	adc_init(ADC_SYSclk_DIV_2); //初始化ADC,P1.0通道 ，ADC时钟频率：SYSclk/2
 	menuFlag = 0;
-	UartInit();
+	UartInit(); 
 	while (1)
 	{
 		menuUI();
@@ -64,6 +64,6 @@ void main()
 		IR_Fore();
 		ADC();
 		}
-		//Delay_ms(1000);
 	}
+
 }

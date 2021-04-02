@@ -8,9 +8,12 @@
 #include "uart.h"
 
 
-extern u8 IR_ON;
-extern u16 ALARM_NUMBER;
-bit    isCountAN=0;           //是否计算报警人数
+extern u8 IR_ON;                  //是否有人进入
+extern u16 ALARM_NUMBER;         //报警人数
+extern u8 voiceFlag;            //声音开关
+extern u8 dB;                  //灵敏度
+bit    isCountAN=0;           //是否已经计算本次报警人数
+u8 alarmLine=60;
 
 /*
 *@brief      ADC初始化
@@ -69,7 +72,7 @@ void ADC()
 	ADC_Data0 = adc_once(ADC_P10, ADC_10BIT); //采集一次ADC，精度10位 
     //temp=(float)4900/(float)1024;
 	//ADCResult0=(u16)(temp*(float)AD_Data0);  计算输出电压  
-	if (ADC_Data0>80)
+	if (ADC_Data0>alarmLine)
 	{
 		if (isCountAN==0)
 		{
@@ -77,21 +80,24 @@ void ADC()
 			ALARM_NUMBER++;
 		}
 	}
-	
-	if(ADC_Data0>80&&ADC_Data0<200)
+	UartSend(alarmLine);
+	if(ADC_Data0>alarmLine&&ADC_Data0<200)
 	{
 	 LED1=0;
+	 if (voiceFlag==0)
 	 BUZZ=0;
 	}else if (ADC_Data0>200&&ADC_Data0<400)
 	{
 	 LED1=0;
 	 LED2=0; 
+	 if (voiceFlag==0)
 	 BUZZ=0;
 	}else if (ADC_Data0>400&&ADC_Data0<600)
 	{
 	 LED1=0;
 	 LED2=0;
 	 LED3=0;
+	 if (voiceFlag==0)
 	 BUZZ=0;
 	}else if (ADC_Data0>600&&ADC_Data0<800)
 	{
@@ -99,6 +105,7 @@ void ADC()
 	 LED2=0;
 	 LED3=0;
 	 LED4=0;
+	 if (voiceFlag==0)
 	 BUZZ=0;
 	}else if (ADC_Data0>800&&ADC_Data0<1000)
 	{
@@ -107,6 +114,7 @@ void ADC()
 	 LED3=0;
 	 LED4=0;
 	 LED5=0;	
+	 if (voiceFlag==0)
 	 BUZZ=0;
 	}else if (ADC_Data0>1000)
 	{
@@ -116,6 +124,7 @@ void ADC()
 	 LED4=0;
 	 LED5=0;
 	 LED6=0;
+	 if (voiceFlag==0)
 	 BUZZ=0;
 	}
 	//UartSend(ADC_Data0);	

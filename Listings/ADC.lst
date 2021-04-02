@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   ADC                                                               04/01/2021 15:38:08 PAGE 1   
+C51 COMPILER V9.60.0.0   ADC                                                               04/02/2021 19:28:50 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC
@@ -19,155 +19,164 @@ line level    source
    8          #include "uart.h"
    9          
   10          
-  11          extern u8 IR_ON;
-  12          extern u16 ALARM_NUMBER;
-  13          bit    isCountAN=0;           //是否计算报警人数
-  14          
-  15          /*
-  16          *@brief      ADC初始化
-  17          *@param      adcn       选择ADC通道
-  18          *@param      speed      ADC时钟频率
-  19          *@return     void
-  20          * Sample usage:   adc_init(ADC_P10,ADC_SYSclk_DIV_2);//初始化P1.0为ADC功能,ADC时钟频率：SYSclk/2
-  21          */
-  22          void adc_init(ADC_SPEED_enum speed)
-  23          {
-  24   1        P_SW2 |= 0x80;
-  25   1        ADCTIM=0x3f;
-  26   1        P_SW2 &=0x7f;
-  27   1        ADC_CONTR|=1<<7 ;        //打开ADC电源   建议在空闲模式和掉电模式前关闭电源
-  28   1        ADC_CONTR &=0xf0;       // 清除ADC_CHS 
-  29   1          ADCCFG|=speed&0x0f;      //设置 ADC时钟频率 默认 0000 SYSclk/2/1 
-  30   1        ADCCFG|=0x20;            //ADCCFG:1101 1110  设置右对齐   
-  31   1      }
-  32          
-  33          /*
-  34           *  @brief     ADC转换一次
-  35           * @param      adcn            选择ADC通道
-  36           * @param     resolution      分辨率
-  37           * @return    转换结果
-  38           * Sample usage: adc_convert(ADC_P10, ADC_10BIT);
-  39           */
-  40          int adc_once(ADCN_enum adcn, ADCRES_enum resolution)
-  41          {
-  42   1        u16 adc_value;
-  43   1        ADC_CONTR &=0xf0;         //清除ADCCHS(3:0) 
-  44   1        ADC_CONTR |=adcn;         //选择ADC模拟通道 
-  45   1        ADC_CONTR|=0x40;         //开始ADC转换，转换完成后硬件自动将此位清零
-  46   1        _nop_();
-  47   1        _nop_();
-  48   1        _nop_();
-  49   1        while (!(ADC_CONTR & 0x20));        // 查询 ADC 完成标志
-  50   1        ADC_CONTR &= ~0x20; // 清完成标志
-  51   1        adc_value=(ADC_RES<<8)|ADC_RESL;
-  52   1        adc_value >>= resolution; //取多少位
-  53   1        return adc_value;
-C51 COMPILER V9.60.0.0   ADC                                                               04/01/2021 15:38:08 PAGE 2   
+  11          extern u8 IR_ON;                  //是否有人进入
+  12          extern u16 ALARM_NUMBER;         //报警人数
+  13          extern u8 voiceFlag;            //声音开关
+  14          extern u8 dB;                  //灵敏度
+  15          bit    isCountAN=0;           //是否已经计算本次报警人数
+  16          u8 alarmLine=60;
+  17          
+  18          /*
+  19          *@brief      ADC初始化
+  20          *@param      adcn       选择ADC通道
+  21          *@param      speed      ADC时钟频率
+  22          *@return     void
+  23          * Sample usage:   adc_init(ADC_P10,ADC_SYSclk_DIV_2);//初始化P1.0为ADC功能,ADC时钟频率：SYSclk/2
+  24          */
+  25          void adc_init(ADC_SPEED_enum speed)
+  26          {
+  27   1        P_SW2 |= 0x80;
+  28   1        ADCTIM=0x3f;
+  29   1        P_SW2 &=0x7f;
+  30   1        ADC_CONTR|=1<<7 ;        //打开ADC电源   建议在空闲模式和掉电模式前关闭电源
+  31   1        ADC_CONTR &=0xf0;       // 清除ADC_CHS 
+  32   1          ADCCFG|=speed&0x0f;      //设置 ADC时钟频率 默认 0000 SYSclk/2/1 
+  33   1        ADCCFG|=0x20;            //ADCCFG:1101 1110  设置右对齐   
+  34   1      }
+  35          
+  36          /*
+  37           *  @brief     ADC转换一次
+  38           * @param      adcn            选择ADC通道
+  39           * @param     resolution      分辨率
+  40           * @return    转换结果
+  41           * Sample usage: adc_convert(ADC_P10, ADC_10BIT);
+  42           */
+  43          int adc_once(ADCN_enum adcn, ADCRES_enum resolution)
+  44          {
+  45   1        u16 adc_value;
+  46   1        ADC_CONTR &=0xf0;         //清除ADCCHS(3:0) 
+  47   1        ADC_CONTR |=adcn;         //选择ADC模拟通道 
+  48   1        ADC_CONTR|=0x40;         //开始ADC转换，转换完成后硬件自动将此位清零
+  49   1        _nop_();
+  50   1        _nop_();
+  51   1        _nop_();
+  52   1        while (!(ADC_CONTR & 0x20));        // 查询 ADC 完成标志
+  53   1        ADC_CONTR &= ~0x20; // 清完成标志
+C51 COMPILER V9.60.0.0   ADC                                                               04/02/2021 19:28:50 PAGE 2   
 
-  54   1      }
-  55          
-  56          
-  57          /************************************************** 
-  58            功能描述: //ADC处理
-  59            入口参数：
-  60            说    明：                        
-  61          **************************************************/
-  62          void ADC()
-  63          {
-  64   1        if (IR_ON==1)
-  65   1        {
-  66   2        //u16 ADCResult0 ;
-  67   2        u16 ADC_Data0 ;
-  68   2          //float temp;
-  69   2        ADC_Data0 = adc_once(ADC_P10, ADC_10BIT); //采集一次ADC，精度10位 
-  70   2          //temp=(float)4900/(float)1024;
-  71   2        //ADCResult0=(u16)(temp*(float)AD_Data0);  计算输出电压  
-  72   2        if (ADC_Data0>80)
-  73   2        {
-  74   3          if (isCountAN==0)
-  75   3          {
-  76   4            isCountAN=1;
-  77   4            ALARM_NUMBER++;
-  78   4          }
-  79   3        }
-  80   2        
-  81   2        if(ADC_Data0>80&&ADC_Data0<200)
-  82   2        {
-  83   3         LED1=0;
-  84   3         BUZZ=0;
-  85   3        }else if (ADC_Data0>200&&ADC_Data0<400)
-  86   2        {
-  87   3         LED1=0;
-  88   3         LED2=0; 
-  89   3         BUZZ=0;
-  90   3        }else if (ADC_Data0>400&&ADC_Data0<600)
-  91   2        {
-  92   3         LED1=0;
-  93   3         LED2=0;
-  94   3         LED3=0;
-  95   3         BUZZ=0;
-  96   3        }else if (ADC_Data0>600&&ADC_Data0<800)
-  97   2        {
-  98   3         LED1=0;
-  99   3         LED2=0;
- 100   3         LED3=0;
- 101   3         LED4=0;
- 102   3         BUZZ=0;
- 103   3        }else if (ADC_Data0>800&&ADC_Data0<1000)
- 104   2        {
- 105   3         LED1=0;
- 106   3         LED2=0;
- 107   3         LED3=0;
- 108   3         LED4=0;
- 109   3         LED5=0;  
- 110   3         BUZZ=0;
- 111   3        }else if (ADC_Data0>1000)
- 112   2        {
- 113   3         LED1=0;
- 114   3         LED2=0;
- 115   3         LED3=0;
-C51 COMPILER V9.60.0.0   ADC                                                               04/01/2021 15:38:08 PAGE 3   
+  54   1        adc_value=(ADC_RES<<8)|ADC_RESL;
+  55   1        adc_value >>= resolution; //取多少位
+  56   1        return adc_value;
+  57   1      }
+  58          
+  59          
+  60          /************************************************** 
+  61            功能描述: //ADC处理
+  62            入口参数：
+  63            说    明：                        
+  64          **************************************************/
+  65          void ADC()
+  66          {
+  67   1        if (IR_ON==1)
+  68   1        {
+  69   2        //u16 ADCResult0 ;
+  70   2        u16 ADC_Data0 ;
+  71   2          //float temp;
+  72   2        ADC_Data0 = adc_once(ADC_P10, ADC_10BIT); //采集一次ADC，精度10位 
+  73   2          //temp=(float)4900/(float)1024;
+  74   2        //ADCResult0=(u16)(temp*(float)AD_Data0);  计算输出电压  
+  75   2        if (ADC_Data0>alarmLine)
+  76   2        {
+  77   3          if (isCountAN==0)
+  78   3          {
+  79   4            isCountAN=1;
+  80   4            ALARM_NUMBER++;
+  81   4          }
+  82   3        }
+  83   2        UartSend(alarmLine);
+  84   2        if(ADC_Data0>alarmLine&&ADC_Data0<200)
+  85   2        {
+  86   3         LED1=0;
+  87   3         if (voiceFlag==0)
+  88   3         BUZZ=0;
+  89   3        }else if (ADC_Data0>200&&ADC_Data0<400)
+  90   2        {
+  91   3         LED1=0;
+  92   3         LED2=0; 
+  93   3         if (voiceFlag==0)
+  94   3         BUZZ=0;
+  95   3        }else if (ADC_Data0>400&&ADC_Data0<600)
+  96   2        {
+  97   3         LED1=0;
+  98   3         LED2=0;
+  99   3         LED3=0;
+ 100   3         if (voiceFlag==0)
+ 101   3         BUZZ=0;
+ 102   3        }else if (ADC_Data0>600&&ADC_Data0<800)
+ 103   2        {
+ 104   3         LED1=0;
+ 105   3         LED2=0;
+ 106   3         LED3=0;
+ 107   3         LED4=0;
+ 108   3         if (voiceFlag==0)
+ 109   3         BUZZ=0;
+ 110   3        }else if (ADC_Data0>800&&ADC_Data0<1000)
+ 111   2        {
+ 112   3         LED1=0;
+ 113   3         LED2=0;
+ 114   3         LED3=0;
+ 115   3         LED4=0;
+C51 COMPILER V9.60.0.0   ADC                                                               04/02/2021 19:28:50 PAGE 3   
 
- 116   3         LED4=0;
- 117   3         LED5=0;
- 118   3         LED6=0;
- 119   3         BUZZ=0;
- 120   3        }
- 121   2        //UartSend(ADC_Data0);  
- 122   2        }else if (IR_ON==0)
- 123   1        {
- 124   2          //当人走了之后将所有参数复位
- 125   2          isCountAN=0;
- 126   2          offLED();
- 127   2          BUZZ=1;        //关闭蜂鸣器
- 128   2        }
- 129   1           
- 130   1      }
- 131          
- 132          /*
- 133           功能描述：熄灭所有的LED灯
- 134          */
- 135          void offLED(){
- 136   1        LED1=1;
- 137   1        LED2=1;
- 138   1          LED3=1;
- 139   1          LED4=1;
- 140   1        LED5=1;
- 141   1        LED6=1;
- 142   1      }
- 143          
- 144          
- 145          
- 146          
-*** WARNING C316 IN LINE 146 OF HARDWARE\ADC\ADC.c: unterminated conditionals
+ 116   3         LED5=0;  
+ 117   3         if (voiceFlag==0)
+ 118   3         BUZZ=0;
+ 119   3        }else if (ADC_Data0>1000)
+ 120   2        {
+ 121   3         LED1=0;
+ 122   3         LED2=0;
+ 123   3         LED3=0;
+ 124   3         LED4=0;
+ 125   3         LED5=0;
+ 126   3         LED6=0;
+ 127   3         if (voiceFlag==0)
+ 128   3         BUZZ=0;
+ 129   3        }
+ 130   2        //UartSend(ADC_Data0);  
+ 131   2        }else if (IR_ON==0)
+ 132   1        {
+ 133   2          //当人走了之后将所有参数复位
+ 134   2          isCountAN=0;
+ 135   2          offLED();
+ 136   2          BUZZ=1;        //关闭蜂鸣器
+ 137   2        }
+ 138   1           
+ 139   1      }
+ 140          
+ 141          /*
+ 142           功能描述：熄灭所有的LED灯
+ 143          */
+ 144          void offLED(){
+ 145   1        LED1=1;
+ 146   1        LED2=1;
+ 147   1          LED3=1;
+ 148   1          LED4=1;
+ 149   1        LED5=1;
+ 150   1        LED6=1;
+ 151   1      }
+ 152          
+ 153          
+ 154          
+ 155          
+*** WARNING C316 IN LINE 155 OF HARDWARE\ADC\ADC.c: unterminated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    314    ----
+   CODE SIZE        =    349    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       2
+   DATA SIZE        =      1       2
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.

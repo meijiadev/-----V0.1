@@ -11,11 +11,12 @@ extern u8 DISPLAY_CODE[19];
 extern u8 Freq_Parm;	  //频率
 extern u16 ALARM_NUMBER;  //报警人数
 extern u16 PEOPLE_NUMBER; //经过人数
+extern u8 alarmLine;
 u8 menuFlag = 0;		  //菜单标志      0:未点击按键前的样子  1：输入密码    2:灵敏度调节   4:密码重置
 u8 psDigits = 0;		  //正在修改的密码位数
 u8 flash_flag = 0;		  //闪烁标志
 u8 flash_M = 0;			  //闪烁计数
-u8 freqFlag = 0;		  //显示频率
+u8 voiceFlag = 0; // 蜂鸣器开关 0：开 1：关
 
 u8 dB; //灵敏度
 //--------保存EEPROM中的密码-------------
@@ -40,20 +41,8 @@ void menuUI()
 	{
 	case 0:
 		psDigits = 0;
-		if (freqFlag == 1)
-		{
-			//显示频率
-			AiP650_Set(0x68, DISPLAY_CODE[16]); //F
-			AiP650_Set(0x6A, DISPLAY_CODE[10]);
-			AiP650_Set(0x6C, DISPLAY_CODE[Freq_Parm % 100 / 10]);
-			AiP650_Set(0x6E, DISPLAY_CODE[Freq_Parm % 10]);
-			delay_ms(2000);
-		}
-		else
-		{
-			AiP650_DisPlayFour(PEOPLE_NUMBER);
-			AiP650_DisPlayFour_1(ALARM_NUMBER);
-		}
+		AiP650_DisPlayFour(PEOPLE_NUMBER);
+		AiP650_DisPlayFour_1(ALARM_NUMBER);
 		break;
 	case 1:
 		passwordUI();
@@ -63,6 +52,11 @@ void menuUI()
 		psDigits = 0;
 		break;
 	case 3:
+		//显示频率
+		AiP650_Set(0x68, DISPLAY_CODE[16]); //F
+		AiP650_Set(0x6A, DISPLAY_CODE[10]);
+		AiP650_Set(0x6C, DISPLAY_CODE[Freq_Parm % 100 / 10]);
+		AiP650_Set(0x6E, DISPLAY_CODE[Freq_Parm % 10]);
 		break;
 	case 4:
 		passwordUI();
@@ -171,10 +165,8 @@ void add()
 	switch (menuFlag)
 	{
 	case 0:
-	    freqFlag=1;
-		Freq_Parm++;
-		if (Freq_Parm > 9)
-			Freq_Parm = 1;
+		menuFlag = 3;
+		UartSend(Freq_Parm);
 		break;
 		//---密码调节---------------------------------
 	case 1:
@@ -255,6 +247,22 @@ void reduce()
 	switch (menuFlag)
 	{
 	case 0:
+		if (voiceFlag == 0)
+		{
+			voiceFlag = 1;
+			LED6 = 0;
+			delay_ms(1000);
+			LED6 = 1;
+		}
+		else
+		{
+			voiceFlag = 0;
+			BUZZ = 0;
+			LED6 = 0;
+			delay_ms(800);
+			BUZZ = 1;
+			LED6 = 1;
+		}
 		break;
 	case 1:
 		switch (psDigits)
@@ -287,33 +295,35 @@ void reduce()
 			dB = 99;
 		break;
 	case 3:
+		Freq_Parm--;
+		if (Freq_Parm == 255)
+			Freq_Parm = 9;
 		break;
 	case 4:
 		//密码重置
 		switch (psDigits)
 		{
 		case 0:
-			mima5++;
-			if (mima5 > 9)
-				mima5 = 0;
+			mima5--;
+			if (mima5 == 255)
+				mima5 = 9;
 			break;
 		case 1:
-			mima6++;
-			if (mima6 > 9)
-				mima6 = 0;
+			mima6--;
+			if (mima6 == 255)
+				mima6 = 9;
 			break;
 		case 2:
-			mima7++;
-			if (mima7 > 9)
-				mima7 = 0;
+			mima7--;
+			if (mima7 == 255)
+				mima7 = 9;
 			break;
 		case 3:
-			mima8++;
-			if (mima8 > 9)
-				mima8 = 0;
+			mima8--;
+			if (mima8 == 255)
+				mima8 = 9;
 			break;
 		}
-		break;
 		break;
 	default:
 		break;
@@ -342,10 +352,13 @@ void enter()
 		}
 		break;
 	case 2:
-	    menuFlag=0;
+		menuFlag = 0;
+		alarmLine=60+(99-dB);
 		saveeepro();
 		break;
 	case 3:
+		menuFlag = 0;
+		saveFreq(Freq_Parm);
 		break;
 	case 4:
 		if (psDigits == 3)
@@ -453,8 +466,6 @@ void dBShow()
 	AiP650_Set_1(0x6e, DISPLAY_CODE[dB % 10]);
 }
 
-
-
 /**
  * @brief   按键扫描---使用按钮时开启
  * @note   按钮地址： A-0x47,B-0x4F,C-0x57,D-0x5F,E-0x67,F-0x6F,G-0x77
@@ -494,7 +505,7 @@ void KEY_CL()
 	KEY = Scan_Key();
 	switch (KEY)
 	{
-		//K1   菜单键	----------------------------------------------------
+		//K1 菜单键
 	case 0x47:
 		menuFlag++;
 		if (menuFlag > 4)
@@ -503,24 +514,24 @@ void KEY_CL()
 		}
 		delay_ms(300);
 		break;
-		//K2    设置+	-------------------------------------
+		//K2  设置+
 	case 0x4F:
 		add();
-		freqFlag=1;
+		//freqFlag=1;
 		delay_ms(300);
 		break;
-		//K3    设置-		----------------------------------------
+		//K3  设置-
 	case 0x57:
 		reduce();
 		delay_ms(300);
 		break;
-		//K4    确认	----------------------------------------
+		//K4  确认
 	case 0x5F: //K2
 		enter();
 		delay_ms(300);
 		break;
 	default:
-	    freqFlag=0;
+		//freqFlag=0;
 		break;
 	}
 }

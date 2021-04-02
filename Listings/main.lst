@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              04/01/2021 17:17:06 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              04/02/2021 18:23:41 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -62,10 +62,10 @@ line level    source
   51   1        Light_Level_Set_1(6);
   52   1        EEPROM_init();
   53   1        adc_init(ADC_SYSclk_DIV_2); //初始化ADC,P1.0通道 ，ADC时钟频率：SYSclk/2
-C51 COMPILER V9.60.0.0   MAIN                                                              04/01/2021 17:17:06 PAGE 2   
+C51 COMPILER V9.60.0.0   MAIN                                                              04/02/2021 18:23:41 PAGE 2   
 
   54   1        menuFlag = 0;
-  55   1        UartInit();
+  55   1        UartInit(); 
   56   1        while (1)
   57   1        {
   58   2          menuUI();
@@ -77,8 +77,8 @@ line level    source
   64   3          IR_Fore();
   65   3          ADC();
   66   3          }
-  67   2          //Delay_ms(1000);
-  68   2        }
+  67   2        }
+  68   1      
   69   1      }
 *** WARNING C316 IN LINE 69 OF MAIN\main.c: unterminated conditionals
 

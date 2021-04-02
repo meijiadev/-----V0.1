@@ -21,6 +21,8 @@ extern u8 mima2;
 extern u8 mima3;
 extern u8 mima4;
 extern u8 dB;
+extern u8 Freq_Parm;
+extern u8 alarmLine;
 
 
 
@@ -106,21 +108,20 @@ void IapEraseSector(u16 addr)
 **************************************************/
 void EEPROM_init()
 {
-	// PEOPLE_NUMBER_H=IapReadByte(PEOPLE_NUM_H_ADDR);
-	// PEOPLE_NUMBER_L=IapReadByte(PEOPLE_NUM_L_ADDR);
-	// PEOPLE_NUMBER=PEOPLE_NUMBER_H<<8;
-	// PEOPLE_NUMBER|=PEOPLE_NUMBER_L;
-	// ALARM_NUMBER_H=IapReadByte(ALARM_NUM_H_ADDR);
-	// ALARM_NUMBER_L=IapReadByte(ALARM_NUM_L_ADDR);
-	// ALARM_NUMBER=ALARM_NUMBER_H<<8;               
-	// ALARM_NUMBER|=ALARM_NUMBER_L;     
+	 
 	mima1 = IapReadByte(0x01);
 	mima2 = IapReadByte(0x02);
 	mima3 = IapReadByte(0x03);
 	mima4 = IapReadByte(0x04);
 	dB = IapReadByte(0x05);
+	Freq_Parm=IapReadByte(0x201);    
+	if (dB>100)
+	    dB=80;
+	alarmLine=60+(99-dB);
+	if (Freq_Parm > 9)
+		Freq_Parm = 2;
 
-	if (mima1 == 255)
+	if (mima1 >9)
 	{
 		mima1 = 1;
 		mima2 = 2;
@@ -128,27 +129,11 @@ void EEPROM_init()
 		mima4 = 4;
 		saveeepro(); //掉电存储
 	}
-	if (dB == 255)
-	{
-		dB = 60;
-	}
 
-	/*	
-	  TAHH=TAHH_H*256+TAHH_L;
-	
-   if(TAHH==65535)
-		{
-			  TAHH=373;
-			  TAHH_L=TAHH;
-				TAHH_H=(TAHH>>8);		
-			  dist_m1=0;
-				saveeepro();                       //掉电存储
-		}
-*/
 }
 
 /**
- * @brief 掉电存储，保存密码
+ * @brief 保存密码
  * @note   
  * @retval None
  */
@@ -163,21 +148,51 @@ void saveeepro()
 }
 
 /**
- * @brief  保存经过的总人数
+ * @brief  保存频率
  * @note   
  * @retval None
  */
-void savePeopleNumber(){
-	PEOPLE_NUMBER_L=PEOPLE_NUMBER;
-	PEOPLE_NUMBER_H=PEOPLE_NUMBER>>8;
-	IapEraseSector(SECTION_2);
-	IapProgramByte(PEOPLE_NUM_H_ADDR,PEOPLE_NUMBER_H);
-	IapProgramByte(PEOPLE_NUM_L_ADDR,PEOPLE_NUMBER_L);
+void saveFreq(u8 dat){
+    IapEraseSector(SECTION_2);
+	IapProgramByte(0x201,dat);
 }
 
+// /**
+//  * @brief  保存经过的总人数(暂不需要)
+//  * @note   
+//  * @retval None
+//  */
+// void savePeopleNumber(){
+// 	PEOPLE_NUMBER_L=PEOPLE_NUMBER;
+// 	PEOPLE_NUMBER_H=PEOPLE_NUMBER>>8;
+// 	IapEraseSector(SECTION_2);
+// 	IapProgramByte(PEOPLE_NUM_H_ADDR,PEOPLE_NUMBER_H);
+// 	IapProgramByte(PEOPLE_NUM_L_ADDR,PEOPLE_NUMBER_L);
+// }
 
 
+// /**
+//  * @brief  掉电检测初始化
+//  * @note   
+//  * @retval None
+//  */
+// void brownoutDetectInit(){
+	
+//     CMPCR2 =0x00;
+// 	CMPCR1 =0x80;               //使能比较器模块
+// 	CMPCR1 |=0x01;               //使能比较器下降边沿中断
+// 	CMPCR1 &=~0x08;              //P3.7为CMP+输入脚
+// 	CMPCR1 &=~0x04;              //内部 1.19V参考信号源为CMP-输入脚
+// 	CMPCR1 |=0x02;              //使能比较器输出
+// 	EA=1;                       //全局中断打开
+// 	UartSend(0x00);
+// }
 
+// void CMP_Isr()interrupt 21{
+// 	CMPCR1 &=~0x40;                             //清除中断标志
+// 	UartSend(0x11);
+
+// }
 
 
 /************************EEPROM结束**********************************/
