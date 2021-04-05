@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   EEPROM                                                            04/02/2021 19:28:50 PAGE 1   
+C51 COMPILER V9.60.0.0   EEPROM                                                            04/03/2021 12:04:58 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE EEPROM
@@ -62,7 +62,7 @@ line level    source
   51   1        IAP_TPS = 24; //设置擦写等待参数24MHZ  8G芯片增加
   52   1        IAP_CMD = CMD_READ;
   53   1        IAP_ADDRL = addr;
-C51 COMPILER V9.60.0.0   EEPROM                                                            04/02/2021 19:28:50 PAGE 2   
+C51 COMPILER V9.60.0.0   EEPROM                                                            04/03/2021 12:04:58 PAGE 2   
 
   54   1        IAP_ADDRH = addr >> 8;
   55   1        IAP_TRIG = 0x5a;
@@ -121,99 +121,97 @@ line level    source
  108          **************************************************/
  109          void EEPROM_init()
  110          {
- 111   1         
- 112   1        mima1 = IapReadByte(0x01);
- 113   1        mima2 = IapReadByte(0x02);
- 114   1        mima3 = IapReadByte(0x03);
- 115   1        mima4 = IapReadByte(0x04);
-C51 COMPILER V9.60.0.0   EEPROM                                                            04/02/2021 19:28:50 PAGE 3   
+ 111   1        mima1 = IapReadByte(0x01);
+ 112   1        mima2 = IapReadByte(0x02);
+ 113   1        mima3 = IapReadByte(0x03);
+ 114   1        mima4 = IapReadByte(0x04);
+ 115   1        dB = IapReadByte(0x05);
+C51 COMPILER V9.60.0.0   EEPROM                                                            04/03/2021 12:04:58 PAGE 3   
 
- 116   1        dB = IapReadByte(0x05);
- 117   1        Freq_Parm=IapReadByte(0x201);    
- 118   1        if (dB>100)
- 119   1            dB=80;
- 120   1        alarmLine=60+(99-dB);
- 121   1        if (Freq_Parm > 9)
- 122   1          Freq_Parm = 2;
- 123   1      
- 124   1        if (mima1 >9)
- 125   1        {
- 126   2          mima1 = 1;
- 127   2          mima2 = 2;
- 128   2          mima3 = 3;
- 129   2          mima4 = 4;
- 130   2          saveeepro(); //掉电存储
- 131   2        }
- 132   1      
- 133   1      }
- 134          
- 135          /**
- 136           * @brief 保存密码
- 137           * @note   
- 138           * @retval None
- 139           */
- 140          void saveeepro()
- 141          {
- 142   1        IapEraseSector(SECTION_1);       //擦除0x01地址中的数据   一定要先擦除再写进  同一地址
- 143   1        IapProgramByte(0x01, mima1); //擦除完成就可以写入了
- 144   1        IapProgramByte(0x02, mima2);
- 145   1        IapProgramByte(0x03, mima3);
- 146   1        IapProgramByte(0x04, mima4);
- 147   1        IapProgramByte(0x05, dB);
- 148   1      }
- 149          
- 150          /**
- 151           * @brief  保存频率
- 152           * @note   
- 153           * @retval None
- 154           */
- 155          void saveFreq(u8 dat){
- 156   1          IapEraseSector(SECTION_2);
- 157   1        IapProgramByte(0x201,dat);
- 158   1      }
- 159          
- 160          // /**
- 161          //  * @brief  保存经过的总人数(暂不需要)
- 162          //  * @note   
- 163          //  * @retval None
- 164          //  */
- 165          // void savePeopleNumber(){
- 166          //  PEOPLE_NUMBER_L=PEOPLE_NUMBER;
- 167          //  PEOPLE_NUMBER_H=PEOPLE_NUMBER>>8;
- 168          //  IapEraseSector(SECTION_2);
- 169          //  IapProgramByte(PEOPLE_NUM_H_ADDR,PEOPLE_NUMBER_H);
- 170          //  IapProgramByte(PEOPLE_NUM_L_ADDR,PEOPLE_NUMBER_L);
- 171          // }
- 172          
- 173          
- 174          // /**
- 175          //  * @brief  掉电检测初始化
- 176          //  * @note   
- 177          //  * @retval None
-C51 COMPILER V9.60.0.0   EEPROM                                                            04/02/2021 19:28:50 PAGE 4   
+ 116   1        Freq_Parm=IapReadByte(0x201);    
+ 117   1        if (dB>100)
+ 118   1            dB=80;
+ 119   1        alarmLine=60+(99-dB);
+ 120   1        if (Freq_Parm > 9)
+ 121   1          Freq_Parm = 2;
+ 122   1        if (mima1 >9)
+ 123   1        {
+ 124   2          mima1 = 1;
+ 125   2          mima2 = 2;
+ 126   2          mima3 = 3;
+ 127   2          mima4 = 4;
+ 128   2          savePassword(); //掉电存储
+ 129   2        }
+ 130   1      
+ 131   1      }
+ 132          
+ 133          /**
+ 134           * @brief 保存密码
+ 135           * @note   
+ 136           * @retval None
+ 137           */
+ 138          void savePassword()
+ 139          {
+ 140   1        IapEraseSector(SECTION_1);       //擦除0x01地址中的数据   一定要先擦除再写进  同一地址
+ 141   1        IapProgramByte(0x01, mima1); //擦除完成就可以写入了
+ 142   1        IapProgramByte(0x02, mima2);
+ 143   1        IapProgramByte(0x03, mima3);
+ 144   1        IapProgramByte(0x04, mima4);
+ 145   1        IapProgramByte(0x05, dB);
+ 146   1      }
+ 147          
+ 148          /**
+ 149           * @brief  保存频率
+ 150           * @note   
+ 151           * @retval None
+ 152           */
+ 153          void saveFreq(u8 dat){
+ 154   1          IapEraseSector(SECTION_2);
+ 155   1        IapProgramByte(0x201,dat);
+ 156   1      }
+ 157          
+ 158          // /**
+ 159          //  * @brief  保存经过的总人数(暂不需要)
+ 160          //  * @note   
+ 161          //  * @retval None
+ 162          //  */
+ 163          // void savePeopleNumber(){
+ 164          //  PEOPLE_NUMBER_L=PEOPLE_NUMBER;
+ 165          //  PEOPLE_NUMBER_H=PEOPLE_NUMBER>>8;
+ 166          //  IapEraseSector(SECTION_2);
+ 167          //  IapProgramByte(PEOPLE_NUM_H_ADDR,PEOPLE_NUMBER_H);
+ 168          //  IapProgramByte(PEOPLE_NUM_L_ADDR,PEOPLE_NUMBER_L);
+ 169          // }
+ 170          
+ 171          
+ 172          // /**
+ 173          //  * @brief  掉电检测初始化
+ 174          //  * @note   
+ 175          //  * @retval None
+ 176          //  */
+ 177          // void brownoutDetectInit(){
+C51 COMPILER V9.60.0.0   EEPROM                                                            04/03/2021 12:04:58 PAGE 4   
 
- 178          //  */
- 179          // void brownoutDetectInit(){
- 180            
- 181          //     CMPCR2 =0x00;
- 182          //  CMPCR1 =0x80;               //使能比较器模块
- 183          //  CMPCR1 |=0x01;               //使能比较器下降边沿中断
- 184          //  CMPCR1 &=~0x08;              //P3.7为CMP+输入脚
- 185          //  CMPCR1 &=~0x04;              //内部 1.19V参考信号源为CMP-输入脚
- 186          //  CMPCR1 |=0x02;              //使能比较器输出
- 187          //  EA=1;                       //全局中断打开
- 188          //  UartSend(0x00);
- 189          // }
- 190          
- 191          // void CMP_Isr()interrupt 21{
- 192          //  CMPCR1 &=~0x40;                             //清除中断标志
- 193          //  UartSend(0x11);
+ 178            
+ 179          //     CMPCR2 =0x00;
+ 180          //  CMPCR1 =0x80;               //使能比较器模块
+ 181          //  CMPCR1 |=0x01;               //使能比较器下降边沿中断
+ 182          //  CMPCR1 &=~0x08;              //P3.7为CMP+输入脚
+ 183          //  CMPCR1 &=~0x04;              //内部 1.19V参考信号源为CMP-输入脚
+ 184          //  CMPCR1 |=0x02;              //使能比较器输出
+ 185          //  EA=1;                       //全局中断打开
+ 186          //  UartSend(0x00);
+ 187          // }
+ 188          
+ 189          // void CMP_Isr()interrupt 21{
+ 190          //  CMPCR1 &=~0x40;                             //清除中断标志
+ 191          //  UartSend(0x11);
+ 192          
+ 193          // }
  194          
- 195          // }
- 196          
- 197          
- 198          /************************EEPROM结束**********************************/
-*** WARNING C316 IN LINE 198 OF HARDWARE\EEPROM\EEPROM.c: unterminated conditionals
+ 195          
+ 196          /************************EEPROM结束**********************************/
+*** WARNING C316 IN LINE 196 OF HARDWARE\EEPROM\EEPROM.c: unterminated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

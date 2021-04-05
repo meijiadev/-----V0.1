@@ -52,7 +52,8 @@ void main()
 	EEPROM_init();
 	adc_init(ADC_SYSclk_DIV_2); //初始化ADC,P1.0通道 ，ADC时钟频率：SYSclk/2
 	menuFlag = 0;
-	UartInit(); 
+	UartInit();
+	initHardware();
 	while (1)
 	{
 		menuUI();
@@ -65,5 +66,39 @@ void main()
 		ADC();
 		}
 	}
+
+}
+
+/**
+ * @brief  初始化硬件
+ * @note   
+ * @retval None
+ */
+void initHardware(){
+	u16 i;
+	for ( i = 0; i < 3; i++)
+	{
+	LED1=0;
+	delay_ms(1000);
+	LED1=1;
+	LED2=0;
+	delay_ms(1000);
+	LED2=1;
+	LED3=0;
+	delay_ms(1000);
+	LED3=1;
+	LED4=0;
+	delay_ms(1000);
+	LED4=1;
+	LED5=0;
+	delay_ms(1000);
+	LED5=1;
+	LED6=0;
+	delay_ms(1000);
+	LED6=1;	
+	}
+	BUZZ=0;
+	delay_ms(500);
+	BUZZ=1;
 
 }

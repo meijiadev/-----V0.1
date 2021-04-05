@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   PWM                                                               04/01/2021 15:38:08 PAGE 1   
+C51 COMPILER V9.60.0.0   PWM                                                               04/03/2021 12:04:58 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PWM
@@ -62,7 +62,7 @@ line level    source
   51   2          PWM2C = 0xCA6;
   52   2          PWM20T2 = 0x0649;
   53   2          PWM20T1 = 0x0980;
-C51 COMPILER V9.60.0.0   PWM                                                               04/01/2021 15:38:08 PAGE 2   
+C51 COMPILER V9.60.0.0   PWM                                                               04/03/2021 12:04:58 PAGE 2   
 
   54   2          PWM21T2 = 0x0000;
   55   2          PWM21T1 = 0x032A;
@@ -126,7 +126,7 @@ line level    source
  113   1        P3M0 = 0x08;       //设置P33为推挽输出
  114   1        PWM15_PWM3_Enable();  //使能PWM模块
  115   1        P_SW2 = 0x80;
-C51 COMPILER V9.60.0.0   PWM                                                               04/01/2021 15:38:08 PAGE 3   
+C51 COMPILER V9.60.0.0   PWM                                                               04/03/2021 12:04:58 PAGE 3   
 
  116   1        PWM3CKS = 0x00; // 时钟选择 （系统时钟）
  117   1        //38Khz

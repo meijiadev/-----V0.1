@@ -12,11 +12,15 @@ extern u8 Freq_Parm;	  //频率
 extern u16 ALARM_NUMBER;  //报警人数
 extern u16 PEOPLE_NUMBER; //经过人数
 extern u8 alarmLine;
-u8 menuFlag = 0;		  //菜单标志      0:未点击按键前的样子  1：输入密码    2:灵敏度调节   4:密码重置
-u8 psDigits = 0;		  //正在修改的密码位数
-u8 flash_flag = 0;		  //闪烁标志
-u8 flash_M = 0;			  //闪烁计数
-u8 voiceFlag = 0; // 蜂鸣器开关 0：开 1：关
+u8 menuFlag = 0;   //菜单标志      0:未点击按键前的样子  1：输入密码    2:灵敏度调节   4:密码重置
+u8 psDigits = 0;   //正在修改的密码位数
+u8 flash_flag = 0; //闪烁标志
+u8 flash_M = 0;	   //闪烁计数
+u8 voiceFlag = 0;  // 蜂鸣器开关 0：开 1：关
+u8 longPress = 0;  //0:短按  1：进入长按准备环节  2：已经进入长按环节
+u8 isPressed;	   //点击后松开的按键
+u8 pressCounts;	   //按钮长按的计数
+// u8 longPressed;    //已经进入长按环节
 
 u8 dB; //灵敏度
 //--------保存EEPROM中的密码-------------
@@ -41,8 +45,11 @@ void menuUI()
 	{
 	case 0:
 		psDigits = 0;
+		if (longPress==0)
+		{
 		AiP650_DisPlayFour(PEOPLE_NUMBER);
-		AiP650_DisPlayFour_1(ALARM_NUMBER);
+		AiP650_DisPlayFour_1(ALARM_NUMBER);	
+		}
 		break;
 	case 1:
 		passwordUI();
@@ -53,10 +60,10 @@ void menuUI()
 		break;
 	case 3:
 		//显示频率
-		AiP650_Set(0x68, DISPLAY_CODE[16]); //F
-		AiP650_Set(0x6A, DISPLAY_CODE[10]);
-		AiP650_Set(0x6C, DISPLAY_CODE[Freq_Parm % 100 / 10]);
-		AiP650_Set(0x6E, DISPLAY_CODE[Freq_Parm % 10]);
+		AiP650_Set_1(0x68, DISPLAY_CODE[16]); //F
+		AiP650_Set_1(0x6A, DISPLAY_CODE[10]);
+		AiP650_Set_1(0x6C, DISPLAY_CODE[Freq_Parm % 100 / 10]);
+		AiP650_Set_1(0x6E, DISPLAY_CODE[Freq_Parm % 10]);
 		break;
 	case 4:
 		passwordUI();
@@ -258,10 +265,10 @@ void reduce()
 		{
 			voiceFlag = 0;
 			BUZZ = 0;
-			LED6 = 0;
+			AiP650_Set_1(0x6E, DISPLAY_CODE[ALARM_NUMBER % 10] | 0x80);
 			delay_ms(800);
+			AiP650_Set_1(0x6E, DISPLAY_CODE[ALARM_NUMBER % 10]);
 			BUZZ = 1;
-			LED6 = 1;
 		}
 		break;
 	case 1:
@@ -342,33 +349,19 @@ void enter()
 	case 0:
 		break;
 	case 1:
-		if (psDigits == 3)
-		{
-			passwordCheck();
-		}
-		else
-		{
-			psDigits++;
-		}
+		passwordCheck();
 		break;
 	case 2:
 		menuFlag = 0;
-		alarmLine=60+(99-dB);
-		saveeepro();
+		alarmLine = 60 + (99 - dB);
+		savePassword();
 		break;
 	case 3:
 		menuFlag = 0;
 		saveFreq(Freq_Parm);
 		break;
 	case 4:
-		if (psDigits == 3)
-		{
-			resetPassword();
-		}
-		else
-		{
-			psDigits++;
-		}
+		resetPassword();
 		break;
 	default:
 		break;
@@ -432,7 +425,7 @@ void resetPassword()
 	mima3 = mima7;
 	mima4 = mima8;
 	//保存密码
-	saveeepro();
+	savePassword();
 	Delay_ms(300);
 	menuFlag = 0; //密码修改完成 回到首页
 	mima5 = 1;
@@ -464,6 +457,28 @@ void dBShow()
 	AiP650_Set_1(0x6A, DISPLAY_CODE[10]);
 	AiP650_Set_1(0x6c, DISPLAY_CODE[dB % 100 / 10]);
 	AiP650_Set_1(0x6e, DISPLAY_CODE[dB % 10]);
+}
+
+/**
+ * @brief  重置所有参数
+ * @note   
+ * @retval None
+ */
+void reset()
+{
+	Freq_Parm = 2;
+	dB = 90;
+	mima1 = 1;
+	mima2 = 2;
+	mima3 = 3;
+	mima4 = 4;
+	savePassword();
+	saveFreq(Freq_Parm);
+	ALARM_NUMBER = 0;
+	PEOPLE_NUMBER = 0;
+	BUZZ = 0;
+	delay_ms(600);
+	BUZZ = 1;
 }
 
 /**
@@ -507,31 +522,80 @@ void KEY_CL()
 	{
 		//K1 菜单键
 	case 0x47:
-		menuFlag++;
-		if (menuFlag > 4)
+		if (menuFlag == 0)
 		{
-			menuFlag = 0;
+			menuFlag = 1;
 		}
+		else if (menuFlag == 1 || menuFlag == 4) //当菜单层在输入密码和重设密码时，按菜单键执行换位操作
+		{
+			psDigits++;
+			if (psDigits > 3)
+			{
+				psDigits = 0;
+			}
+		}
+		isPressed = KEY;
 		delay_ms(300);
 		break;
 		//K2  设置+
 	case 0x4F:
 		add();
+		isPressed = KEY;
 		//freqFlag=1;
 		delay_ms(300);
 		break;
 		//K3  设置-
 	case 0x57:
 		reduce();
+		isPressed = KEY;
 		delay_ms(300);
 		break;
 		//K4  确认
 	case 0x5F: //K2
-		enter();
-		delay_ms(300);
+		isPressed = KEY;
+		switch (longPress)
+		{
+		case 0:       //第一次点击
+			pressCounts = 0;
+			longPress = 1;
+			delay_ms(500);
+			break;
+		case 1:      //进入长按环节
+			if (pressCounts == 10)
+			{
+				//长按3s
+				if (longPress == 1)
+				{
+					longPress = 2; //进入长按环节，避免重复执行长按的操作
+				}
+			}
+			else
+			{
+				delay_ms(300);
+				pressCounts++;
+				AiP650_DisPlayFour(8888);
+			    AiP650_DisPlayFour_1(8888);
+			}
+			break;
+		case 2: 
+		     //长按三秒后
+			//重置所有参数
+			reset();
+			break;
+		default:
+			break;
+		}
 		break;
-	default:
-		//freqFlag=0;
+	default: //松开按键和未执行按键操作时
+		longPress = 0;
+		pressCounts = 0;
+		if (isPressed == 0x5F)
+		{
+			AiP650_DisPlayFour(PEOPLE_NUMBER);
+			enter();
+			delay_ms(300);
+			isPressed = 0;
+		}
 		break;
 	}
 }

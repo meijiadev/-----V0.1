@@ -13,7 +13,7 @@ extern u16 ALARM_NUMBER;         //报警人数
 extern u8 voiceFlag;            //声音开关
 extern u8 dB;                  //灵敏度
 bit    isCountAN=0;           //是否已经计算本次报警人数
-u8 alarmLine=60;
+u8 alarmLine=60;   
 
 /*
 *@brief      ADC初始化
@@ -80,7 +80,7 @@ void ADC()
 			ALARM_NUMBER++;
 		}
 	}
-	UartSend(alarmLine);
+	UartSend(ADC_Data0);
 	if(ADC_Data0>alarmLine&&ADC_Data0<200)
 	{
 	 LED1=0;
@@ -126,16 +126,14 @@ void ADC()
 	 LED6=0;
 	 if (voiceFlag==0)
 	 BUZZ=0;
-	}
-	//UartSend(ADC_Data0);	
+	}	
 	}else if (IR_ON==0)
 	{
 		//当人走了之后将所有参数复位
 		isCountAN=0;
 		offLED();
 		BUZZ=1;        //关闭蜂鸣器
-	}
-     
+	}  
 }
 
 /*
@@ -149,7 +147,3 @@ void offLED(){
 	LED5=1;
 	LED6=1;
 }
-
-
-
-

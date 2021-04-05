@@ -108,7 +108,6 @@ void IapEraseSector(u16 addr)
 **************************************************/
 void EEPROM_init()
 {
-	 
 	mima1 = IapReadByte(0x01);
 	mima2 = IapReadByte(0x02);
 	mima3 = IapReadByte(0x03);
@@ -120,14 +119,13 @@ void EEPROM_init()
 	alarmLine=60+(99-dB);
 	if (Freq_Parm > 9)
 		Freq_Parm = 2;
-
 	if (mima1 >9)
 	{
 		mima1 = 1;
 		mima2 = 2;
 		mima3 = 3;
 		mima4 = 4;
-		saveeepro(); //掉电存储
+		savePassword(); //掉电存储
 	}
 
 }
@@ -137,7 +135,7 @@ void EEPROM_init()
  * @note   
  * @retval None
  */
-void saveeepro()
+void savePassword()
 {
 	IapEraseSector(SECTION_1);			 //擦除0x01地址中的数据	  一定要先擦除再写进  同一地址
 	IapProgramByte(0x01, mima1); //擦除完成就可以写入了

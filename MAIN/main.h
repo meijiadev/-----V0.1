@@ -34,4 +34,6 @@ sbit LED6 = P1 ^ 6;
 
 
 sbit BUZZ = P0 ^ 4;            //·äÃùÆ÷
+
+void initHardware();
 #endif

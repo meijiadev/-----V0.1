@@ -32,7 +32,7 @@ void IapProgramByte(u16 addr,u8 dat);      //写入一个字节函数
 u8 IapReadByte(u16 addr);                  //读取一个字节函数
 void IapIdle();                            //操作函数
 //bit flag_eeprom1=1;                      //掉电存储的标志位
-void saveeepro();                          //保存密码
+void savePassword();                          //保存密码
 void saveFreq(u8 dat);                           //保存频率
 void savePeopleNumber();                   //保存经过人数和报警人数
 void brownoutDetectInit();                 //掉电检测初始化

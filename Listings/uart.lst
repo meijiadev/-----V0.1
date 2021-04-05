@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   UART                                                              03/27/2021 10:20:05 PAGE 1   
+C51 COMPILER V9.60.0.0   UART                                                              04/03/2021 12:04:59 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE UART
@@ -20,68 +20,71 @@ line level    source
    9          u8  rptr;
   10          bit busy;          //位标量 只表示一位 0或者1
   11          u8  buffer[16];
-  12          /* 
-  13            功能描述：串口1初始化
-  14           */
-  15           void UartInit(){
-  16   1           SCON=0x50;           //串口控制寄存器  --0011 0000 选择模式0（同步移位串行方式）
-  17   1           T2L=BRT;             
-  18   1           T2H=BRT>>8;
-  19   1           AUXR=0x15;          //辅助寄存器 0001 0011 ：串口1模式0的波特率不加倍 ，波特率发射器选择定时器2作为发
+  12          
+  13          
+  14          /* 
+  15            功能描述：串口1初始化
+  16           */
+  17          void UartInit(){
+  18   1           SCON=0x50;           //串口控制寄存器  --0011 0000 选择模式0（同步移位串行方式）
+  19   1           T2L=BRT;             
+  20   1           T2H=BRT>>8;          
+  21   1           AUXR=0x15;          //辅助寄存器 0001 0011 ：串口1模式0的波特率不加倍 ，波特率发射器选择定时器2作为发
              -射器
-  20   1           wptr=0x00;
-  21   1           rptr=0x00;
-  22   1           busy=0;
-  23   1           ES=1;              //串行口中断允许 1
-  24   1           EA=1;              //全局中断允许 1
-  25   1       }
-  26          /*
-  27           功能描述：往串口发送一个字节
-  28           参数说明：要发送的数据
-  29          */
-  30           void UartSend(u8 dat){
-  31   1           while (busy);
-  32   1           busy=1;
-  33   1           SBUF=dat;     
-  34   1       }
-  35          
-  36          /*
-  37            功能描述：往串口发送一个字符串
-  38            参数说明：字符指针
-  39          */
-  40           void UartSendStr(u8 *p){
-  41   1          while (*p)
-  42   1          {
-  43   2              UartSend(*p++);
-  44   2          }
-  45   1       }
-  46          
-  47          /*
-  48            功能描述：中断函数
-  49             interrupt 4表示串行口中断
-  50          */
-  51          void UartInterrupt() interrupt 4 using 1{
-  52   1          if (TI)
-C51 COMPILER V9.60.0.0   UART                                                              03/27/2021 10:20:05 PAGE 2   
+  22   1           wptr=0x00;
+  23   1           rptr=0x00;
+  24   1           busy=0;
+  25   1           ES=1;              //串行口中断允许 1
+  26   1           EA=1;              //全局中断允许 1
+  27   1      }
+  28          
+  29          
+  30          /*
+  31           功能描述：往串口发送一个字节
+  32           参数说明：要发送的数据
+  33          */
+  34          void UartSend(u8 dat){
+  35   1           while (busy);
+  36   1           busy=1;
+  37   1           SBUF=dat;     
+  38   1      }
+  39          
+  40          /*
+  41            功能描述：往串口发送一个字符串
+  42            参数说明：字符指针
+  43          */
+  44          void UartSendStr(u8 *p){
+  45   1          while (*p)
+  46   1          {
+  47   2              UartSend(*p++);
+  48   2          }
+  49   1      }
+  50          
+  51          /*
+  52          *功能描述：中断函数
+C51 COMPILER V9.60.0.0   UART                                                              04/03/2021 12:04:59 PAGE 2   
 
-  53   1          {
-  54   2              TI=0;
-  55   2              busy=0;
-  56   2          }
-  57   1      
-  58   1          if (RI)
-  59   1          {
-  60   2              RI=0;
-  61   2              buffer[wptr++]=SBUF;
-  62   2              wptr &=0x0f;
-  63   2              
-  64   2          }
-  65   1      
-  66   1      }
-  67          
-  68          
-  69           
-*** WARNING C316 IN LINE 69 OF HARDWARE\UART\uart.c: unterminated conditionals
+  53          *interrupt 4表示串行口中断
+  54          */
+  55          void UartInterrupt() interrupt 4 using 1{
+  56   1          if (TI)
+  57   1          {
+  58   2              TI=0;
+  59   2              busy=0;
+  60   2          }
+  61   1          if (RI)
+  62   1          {
+  63   2              RI=0;
+  64   2              buffer[wptr++]=SBUF;
+  65   2              wptr &=0x0f;
+  66   2              
+  67   2          }
+  68   1      }
+  69          
+  70          
+  71          
+  72           
+*** WARNING C316 IN LINE 72 OF HARDWARE\UART\uart.c: unterminated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
