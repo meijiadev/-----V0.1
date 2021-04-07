@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   IR                                                                04/03/2021 16:25:25 PAGE 1   
+C51 COMPILER V9.60.0.0   IR                                                                04/05/2021 15:31:36 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE IR
@@ -31,16 +31,16 @@ line level    source
   20   1        // 有一个红外检测到有人并且标志位是关闭的
   21   1        if ((IR1==0||IR2==0)&&IR_ON==0)
   22   1        {
-  23   2         UartSend((u8)IR2);     //有人进入安检门
+  23   2         //UartSend((u8)IR2);     //有人进入安检门
   24   2         IR_ON=1;  //以防在同一个人的情况下多次进入循环
   25   2         PEOPLE_NUMBER++;
   26   2        }
   27   1      
   28   1        if(IR1==1&&IR2==1&&IR_ON==1)
   29   1        {
-  30   2          UartSend((u8)IR2);
+  30   2          //UartSend((u8)IR2);
   31   2          IR_ONM++;
-  32   2          if (IR_ONM>120)
+  32   2          if (IR_ONM>100)
   33   2          {
   34   3            IR_ONM=0;
   35   3            IR_ON=0;//当未检测到人时不会一直进入到此条件语句
@@ -53,7 +53,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     66    ----
+   CODE SIZE        =     52    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

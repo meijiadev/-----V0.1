@@ -20,7 +20,7 @@ u8 voiceFlag = 0;  // 蜂鸣器开关 0：开 1：关
 u8 longPress = 0;  //0:短按  1：进入长按准备环节  2：已经进入长按环节
 u8 isPressed;	   //点击后松开的按键
 u8 pressCounts;	   //按钮长按的计数
-// u8 longPressed;    //已经进入长按环节
+
 
 u8 dB; //灵敏度
 //--------保存EEPROM中的密码-------------
@@ -257,17 +257,13 @@ void reduce()
 		if (voiceFlag == 0)
 		{
 			voiceFlag = 1;
-			LED6 = 0;
 			delay_ms(1000);
-			LED6 = 1;
 		}
 		else
 		{
 			voiceFlag = 0;
 			BUZZ = 0;
-			AiP650_Set_1(0x6E, DISPLAY_CODE[ALARM_NUMBER % 10] | 0x80);
 			delay_ms(800);
-			AiP650_Set_1(0x6E, DISPLAY_CODE[ALARM_NUMBER % 10]);
 			BUZZ = 1;
 		}
 		break;
@@ -303,7 +299,7 @@ void reduce()
 		break;
 	case 3:
 		Freq_Parm--;
-		if (Freq_Parm == 255)
+		if (Freq_Parm < 1)
 			Freq_Parm = 9;
 		break;
 	case 4:
@@ -352,9 +348,9 @@ void enter()
 		passwordCheck();
 		break;
 	case 2:
-		menuFlag = 0;
 		alarmLine = 60 + (99 - dB);
 		savePassword();
+		menuFlag=4;
 		break;
 	case 3:
 		menuFlag = 0;
@@ -467,7 +463,7 @@ void dBShow()
 void reset()
 {
 	Freq_Parm = 2;
-	dB = 90;
+	dB = 80;
 	mima1 = 1;
 	mima2 = 2;
 	mima3 = 3;

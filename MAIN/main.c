@@ -53,7 +53,9 @@ void main()
 	adc_init(ADC_SYSclk_DIV_2); //初始化ADC,P1.0通道 ，ADC时钟频率：SYSclk/2
 	menuFlag = 0;
 	UartInit();
+	delay_ms(10000);
 	initHardware();
+	delay_ms(5000);
 	while (1)
 	{
 		menuUI();
@@ -76,29 +78,29 @@ void main()
  */
 void initHardware(){
 	u16 i;
-	for ( i = 0; i < 3; i++)
+	for ( i = 0; i < 2; i++)
 	{
 	LED1=0;
-	delay_ms(1000);
+	delay_ms(600);
 	LED1=1;
 	LED2=0;
-	delay_ms(1000);
+	delay_ms(600);
 	LED2=1;
 	LED3=0;
-	delay_ms(1000);
+	delay_ms(600);
 	LED3=1;
 	LED4=0;
-	delay_ms(1000);
+	delay_ms(600);
 	LED4=1;
 	LED5=0;
-	delay_ms(1000);
+	delay_ms(600);
 	LED5=1;
 	LED6=0;
-	delay_ms(1000);
+	delay_ms(600);
 	LED6=1;	
 	}
 	BUZZ=0;
-	delay_ms(500);
+	delay_ms(600);
 	BUZZ=1;
 
 }

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 1   
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GUI
@@ -31,7 +31,7 @@ line level    source
   20          u8 longPress = 0;  //0:短按  1：进入长按准备环节  2：已经进入长按环节
   21          u8 isPressed;    //点击后松开的按键
   22          u8 pressCounts;    //按钮长按的计数
-  23          // u8 longPressed;    //已经进入长按环节
+  23          
   24          
   25          u8 dB; //灵敏度
   26          //--------保存EEPROM中的密码-------------
@@ -62,7 +62,7 @@ line level    source
   51   3          AiP650_DisPlayFour_1(ALARM_NUMBER); 
   52   3          }
   53   2          break;
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 2   
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 2   
 
   54   2        case 1:
   55   2          passwordUI();
@@ -126,7 +126,7 @@ line level    source
  113   3            break;
  114   3          default:
  115   3            break;
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 3   
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 3   
 
  116   3          }
  117   2          break;
@@ -190,7 +190,7 @@ line level    source
  175   2          menuFlag = 3;
  176   2          UartSend(Freq_Parm);
  177   2          break;
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 4   
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 4   
 
  178   2          //---密码调节---------------------------------
  179   2        case 1:
@@ -254,7 +254,7 @@ line level    source
  237   3            if (mima8 > 9)
  238   3              mima8 = 0;
  239   3            break;
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 5   
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 5   
 
  240   3          }
  241   2          break;
@@ -276,370 +276,364 @@ line level    source
  257   2          if (voiceFlag == 0)
  258   2          {
  259   3            voiceFlag = 1;
- 260   3            LED6 = 0;
- 261   3            delay_ms(1000);
- 262   3            LED6 = 1;
- 263   3          }
- 264   2          else
- 265   2          {
- 266   3            voiceFlag = 0;
- 267   3            BUZZ = 0;
- 268   3            AiP650_Set_1(0x6E, DISPLAY_CODE[ALARM_NUMBER % 10] | 0x80);
- 269   3            delay_ms(800);
- 270   3            AiP650_Set_1(0x6E, DISPLAY_CODE[ALARM_NUMBER % 10]);
- 271   3            BUZZ = 1;
- 272   3          }
- 273   2          break;
- 274   2        case 1:
- 275   2          switch (psDigits)
- 276   2          {
- 277   3          case 0:
- 278   3            mima5--;
- 279   3            if (mima5 == 255)
- 280   3              mima5 = 9;
- 281   3            break;
- 282   3          case 1:
- 283   3            mima6--;
- 284   3            if (mima6 == 255)
- 285   3              mima6 = 9;
- 286   3            break;
- 287   3          case 2:
- 288   3            mima7--;
- 289   3            if (mima7 == 255)
- 290   3              mima7 = 9;
- 291   3            break;
- 292   3          case 3:
- 293   3            mima8--;
- 294   3            if (mima8 == 255)
- 295   3              mima8 = 9;
- 296   3            break;
- 297   3          }
- 298   2          break;
- 299   2        case 2:
- 300   2          dB--;
- 301   2          if (dB == 255)
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 6   
+ 260   3            delay_ms(1000);
+ 261   3          }
+ 262   2          else
+ 263   2          {
+ 264   3            voiceFlag = 0;
+ 265   3            BUZZ = 0;
+ 266   3            delay_ms(800);
+ 267   3            BUZZ = 1;
+ 268   3          }
+ 269   2          break;
+ 270   2        case 1:
+ 271   2          switch (psDigits)
+ 272   2          {
+ 273   3          case 0:
+ 274   3            mima5--;
+ 275   3            if (mima5 == 255)
+ 276   3              mima5 = 9;
+ 277   3            break;
+ 278   3          case 1:
+ 279   3            mima6--;
+ 280   3            if (mima6 == 255)
+ 281   3              mima6 = 9;
+ 282   3            break;
+ 283   3          case 2:
+ 284   3            mima7--;
+ 285   3            if (mima7 == 255)
+ 286   3              mima7 = 9;
+ 287   3            break;
+ 288   3          case 3:
+ 289   3            mima8--;
+ 290   3            if (mima8 == 255)
+ 291   3              mima8 = 9;
+ 292   3            break;
+ 293   3          }
+ 294   2          break;
+ 295   2        case 2:
+ 296   2          dB--;
+ 297   2          if (dB == 255)
+ 298   2            dB = 99;
+ 299   2          break;
+ 300   2        case 3:
+ 301   2          Freq_Parm--;
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 6   
 
- 302   2            dB = 99;
- 303   2          break;
- 304   2        case 3:
- 305   2          Freq_Parm--;
- 306   2          if (Freq_Parm == 255)
- 307   2            Freq_Parm = 9;
- 308   2          break;
- 309   2        case 4:
- 310   2          //密码重置
- 311   2          switch (psDigits)
- 312   2          {
- 313   3          case 0:
- 314   3            mima5--;
- 315   3            if (mima5 == 255)
- 316   3              mima5 = 9;
- 317   3            break;
- 318   3          case 1:
- 319   3            mima6--;
- 320   3            if (mima6 == 255)
- 321   3              mima6 = 9;
- 322   3            break;
- 323   3          case 2:
- 324   3            mima7--;
- 325   3            if (mima7 == 255)
- 326   3              mima7 = 9;
- 327   3            break;
- 328   3          case 3:
- 329   3            mima8--;
- 330   3            if (mima8 == 255)
- 331   3              mima8 = 9;
- 332   3            break;
- 333   3          }
- 334   2          break;
- 335   2        default:
- 336   2          break;
- 337   2        }
- 338   1      }
- 339          
- 340          /**
- 341           * @brief  确定按键的处理事件
- 342           * @note   
- 343           * @retval None
- 344           */
- 345          void enter()
- 346          {
- 347   1        switch (menuFlag)
- 348   1        {
- 349   2        case 0:
- 350   2          break;
- 351   2        case 1:
- 352   2          passwordCheck();
- 353   2          break;
- 354   2        case 2:
- 355   2          menuFlag = 0;
- 356   2          alarmLine = 60 + (99 - dB);
- 357   2          savePassword();
+ 302   2          if (Freq_Parm < 1)
+ 303   2            Freq_Parm = 9;
+ 304   2          break;
+ 305   2        case 4:
+ 306   2          //密码重置
+ 307   2          switch (psDigits)
+ 308   2          {
+ 309   3          case 0:
+ 310   3            mima5--;
+ 311   3            if (mima5 == 255)
+ 312   3              mima5 = 9;
+ 313   3            break;
+ 314   3          case 1:
+ 315   3            mima6--;
+ 316   3            if (mima6 == 255)
+ 317   3              mima6 = 9;
+ 318   3            break;
+ 319   3          case 2:
+ 320   3            mima7--;
+ 321   3            if (mima7 == 255)
+ 322   3              mima7 = 9;
+ 323   3            break;
+ 324   3          case 3:
+ 325   3            mima8--;
+ 326   3            if (mima8 == 255)
+ 327   3              mima8 = 9;
+ 328   3            break;
+ 329   3          }
+ 330   2          break;
+ 331   2        default:
+ 332   2          break;
+ 333   2        }
+ 334   1      }
+ 335          
+ 336          /**
+ 337           * @brief  确定按键的处理事件
+ 338           * @note   
+ 339           * @retval None
+ 340           */
+ 341          void enter()
+ 342          {
+ 343   1        switch (menuFlag)
+ 344   1        {
+ 345   2        case 0:
+ 346   2          break;
+ 347   2        case 1:
+ 348   2          passwordCheck();
+ 349   2          break;
+ 350   2        case 2:
+ 351   2          alarmLine = 60 + (99 - dB);
+ 352   2          savePassword();
+ 353   2          menuFlag=4;
+ 354   2          break;
+ 355   2        case 3:
+ 356   2          menuFlag = 0;
+ 357   2          saveFreq(Freq_Parm);
  358   2          break;
- 359   2        case 3:
- 360   2          menuFlag = 0;
- 361   2          saveFreq(Freq_Parm);
- 362   2          break;
- 363   2        case 4:
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 7   
+ 359   2        case 4:
+ 360   2          resetPassword();
+ 361   2          break;
+ 362   2        default:
+ 363   2          break;
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 7   
 
- 364   2          resetPassword();
- 365   2          break;
- 366   2        default:
- 367   2          break;
- 368   2        }
- 369   1      }
- 370          
- 371          /**
- 372           * @brief  密码校验
- 373           * @note   
- 374           * @retval None
- 375           */
- 376          void passwordCheck()
- 377          {
- 378   1        UartSend(mima1);
- 379   1        UartSend(mima2);
- 380   1        UartSend(mima3);
- 381   1        UartSend(mima4);
- 382   1        //-----超级密码判断成功进入密码重置环节---------------------------------------------------
- 383   1        if (mima5 == 8 && mima6 == 8 && mima7 == 8 && mima8 == 8)
- 384   1        {
- 385   2          delay_ms(800);
- 386   2          menuFlag = 4; //进入密码重置环节
- 387   2          //CD_flag=4;ID1=0;
- 388   2          mima5 = 1;
- 389   2          mima6 = 1;
- 390   2          mima7 = 1;
- 391   2          mima8 = 1; //密码显示数字重置
- 392   2          psDigits = 0;
- 393   2        } //-----密码判断正确---------------------------------------------------
- 394   1        else if (mima5 == mima1 && mima6 == mima2 && mima7 == mima3 && mima8 == mima4)
- 395   1        {
- 396   2      
- 397   2          AiP650_Set_1(0x68, DISPLAY_CODE[13]);
- 398   2          checkResult();
- 399   2          delay_ms(800);
- 400   2          menuFlag = 2; //进入灵敏度设置
- 401   2        }
- 402   1        else
- 403   1        {
- 404   2          //密码校验错误
- 405   2          AiP650_Set_1(0x68, DISPLAY_CODE[15]);
- 406   2          checkResult();
- 407   2          delay_ms(800);
- 408   2          menuFlag = 1;
- 409   2          mima5 = 1;
- 410   2          mima6 = 2;
- 411   2          mima7 = 3;
- 412   2          mima8 = 4; //密码显示数字重置
- 413   2          psDigits = 0;
- 414   2        }
- 415   1      }
- 416          /**
- 417           * @brief  重置密码
- 418           * @note   
- 419           * @retval None
- 420           */
- 421          void resetPassword()
- 422          {
- 423   1        mima1 = mima5;
- 424   1        mima2 = mima6;
- 425   1        mima3 = mima7;
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 8   
+ 364   2        }
+ 365   1      }
+ 366          
+ 367          /**
+ 368           * @brief  密码校验
+ 369           * @note   
+ 370           * @retval None
+ 371           */
+ 372          void passwordCheck()
+ 373          {
+ 374   1        UartSend(mima1);
+ 375   1        UartSend(mima2);
+ 376   1        UartSend(mima3);
+ 377   1        UartSend(mima4);
+ 378   1        //-----超级密码判断成功进入密码重置环节---------------------------------------------------
+ 379   1        if (mima5 == 8 && mima6 == 8 && mima7 == 8 && mima8 == 8)
+ 380   1        {
+ 381   2          delay_ms(800);
+ 382   2          menuFlag = 4; //进入密码重置环节
+ 383   2          //CD_flag=4;ID1=0;
+ 384   2          mima5 = 1;
+ 385   2          mima6 = 1;
+ 386   2          mima7 = 1;
+ 387   2          mima8 = 1; //密码显示数字重置
+ 388   2          psDigits = 0;
+ 389   2        } //-----密码判断正确---------------------------------------------------
+ 390   1        else if (mima5 == mima1 && mima6 == mima2 && mima7 == mima3 && mima8 == mima4)
+ 391   1        {
+ 392   2      
+ 393   2          AiP650_Set_1(0x68, DISPLAY_CODE[13]);
+ 394   2          checkResult();
+ 395   2          delay_ms(800);
+ 396   2          menuFlag = 2; //进入灵敏度设置
+ 397   2        }
+ 398   1        else
+ 399   1        {
+ 400   2          //密码校验错误
+ 401   2          AiP650_Set_1(0x68, DISPLAY_CODE[15]);
+ 402   2          checkResult();
+ 403   2          delay_ms(800);
+ 404   2          menuFlag = 1;
+ 405   2          mima5 = 1;
+ 406   2          mima6 = 2;
+ 407   2          mima7 = 3;
+ 408   2          mima8 = 4; //密码显示数字重置
+ 409   2          psDigits = 0;
+ 410   2        }
+ 411   1      }
+ 412          /**
+ 413           * @brief  重置密码
+ 414           * @note   
+ 415           * @retval None
+ 416           */
+ 417          void resetPassword()
+ 418          {
+ 419   1        mima1 = mima5;
+ 420   1        mima2 = mima6;
+ 421   1        mima3 = mima7;
+ 422   1        mima4 = mima8;
+ 423   1        //保存密码
+ 424   1        savePassword();
+ 425   1        Delay_ms(300);
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 8   
 
- 426   1        mima4 = mima8;
- 427   1        //保存密码
- 428   1        savePassword();
- 429   1        Delay_ms(300);
- 430   1        menuFlag = 0; //密码修改完成 回到首页
- 431   1        mima5 = 1;
- 432   1        mima6 = 2;
- 433   1        mima7 = 3;
- 434   1        mima8 = 4;
- 435   1      }
- 436          
- 437          /**
- 438           * @brief  校验结果的UI显示
- 439           * @note   
- 440           * @retval None
- 441           */
- 442          void checkResult()
- 443          {
- 444   1        AiP650_Set_1(0x6A, DISPLAY_CODE[0]);
- 445   1        AiP650_Set_1(0x6C, DISPLAY_CODE[0]);
- 446   1        AiP650_Set_1(0x6E, DISPLAY_CODE[0]);
- 447   1      }
- 448          
- 449          /**
- 450           * @brief 灵敏度显示
- 451           * @note   
- 452           * @retval None
- 453           */
- 454          void dBShow()
- 455          {
- 456   1        AiP650_Set_1(0x68, DISPLAY_CODE[1]);
- 457   1        AiP650_Set_1(0x6A, DISPLAY_CODE[10]);
- 458   1        AiP650_Set_1(0x6c, DISPLAY_CODE[dB % 100 / 10]);
- 459   1        AiP650_Set_1(0x6e, DISPLAY_CODE[dB % 10]);
- 460   1      }
- 461          
- 462          /**
- 463           * @brief  重置所有参数
- 464           * @note   
- 465           * @retval None
- 466           */
- 467          void reset()
- 468          {
- 469   1        Freq_Parm = 2;
- 470   1        dB = 90;
- 471   1        mima1 = 1;
- 472   1        mima2 = 2;
- 473   1        mima3 = 3;
- 474   1        mima4 = 4;
- 475   1        savePassword();
- 476   1        saveFreq(Freq_Parm);
- 477   1        ALARM_NUMBER = 0;
- 478   1        PEOPLE_NUMBER = 0;
- 479   1        BUZZ = 0;
- 480   1        delay_ms(600);
- 481   1        BUZZ = 1;
- 482   1      }
- 483          
- 484          /**
- 485           * @brief   按键扫描---使用按钮时开启
- 486           * @note   按钮地址： A-0x47,B-0x4F,C-0x57,D-0x5F,E-0x67,F-0x6F,G-0x77
- 487           * @retval 
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 9   
+ 426   1        menuFlag = 0; //密码修改完成 回到首页
+ 427   1        mima5 = 1;
+ 428   1        mima6 = 2;
+ 429   1        mima7 = 3;
+ 430   1        mima8 = 4;
+ 431   1      }
+ 432          
+ 433          /**
+ 434           * @brief  校验结果的UI显示
+ 435           * @note   
+ 436           * @retval None
+ 437           */
+ 438          void checkResult()
+ 439          {
+ 440   1        AiP650_Set_1(0x6A, DISPLAY_CODE[0]);
+ 441   1        AiP650_Set_1(0x6C, DISPLAY_CODE[0]);
+ 442   1        AiP650_Set_1(0x6E, DISPLAY_CODE[0]);
+ 443   1      }
+ 444          
+ 445          /**
+ 446           * @brief 灵敏度显示
+ 447           * @note   
+ 448           * @retval None
+ 449           */
+ 450          void dBShow()
+ 451          {
+ 452   1        AiP650_Set_1(0x68, DISPLAY_CODE[1]);
+ 453   1        AiP650_Set_1(0x6A, DISPLAY_CODE[10]);
+ 454   1        AiP650_Set_1(0x6c, DISPLAY_CODE[dB % 100 / 10]);
+ 455   1        AiP650_Set_1(0x6e, DISPLAY_CODE[dB % 10]);
+ 456   1      }
+ 457          
+ 458          /**
+ 459           * @brief  重置所有参数
+ 460           * @note   
+ 461           * @retval None
+ 462           */
+ 463          void reset()
+ 464          {
+ 465   1        Freq_Parm = 2;
+ 466   1        dB = 80;
+ 467   1        mima1 = 1;
+ 468   1        mima2 = 2;
+ 469   1        mima3 = 3;
+ 470   1        mima4 = 4;
+ 471   1        savePassword();
+ 472   1        saveFreq(Freq_Parm);
+ 473   1        ALARM_NUMBER = 0;
+ 474   1        PEOPLE_NUMBER = 0;
+ 475   1        BUZZ = 0;
+ 476   1        delay_ms(600);
+ 477   1        BUZZ = 1;
+ 478   1      }
+ 479          
+ 480          /**
+ 481           * @brief   按键扫描---使用按钮时开启
+ 482           * @note   按钮地址： A-0x47,B-0x4F,C-0x57,D-0x5F,E-0x67,F-0x6F,G-0x77
+ 483           * @retval 
+ 484           */
+ 485          u8 Scan_Key()
+ 486          {
+ 487   1        u8 i;
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 9   
 
- 488           */
- 489          u8 Scan_Key()
- 490          {
- 491   1        u8 i;
- 492   1        u8 rekey;
- 493   1        I2CStart();
- 494   1        I2CWrByte(0x49); //读按键命令
- 495   1        I2Cask();
- 496   1        for (i = 0; i < 8; i++)
- 497   1        {
- 498   2          CLK_H;
- 499   2          rekey = rekey << 1;
- 500   2          if (DIO)
- 501   2          {
- 502   3            rekey++;
- 503   3          }
- 504   2          Delay_us(10);
- 505   2          CLK_L;
- 506   2        }
- 507   1        I2Cask();
- 508   1        I2CStop();
- 509   1        return (rekey);
- 510   1      }
- 511          
- 512          /**
- 513           * @brief  按键监听事件
- 514           * @note   
- 515           * @retval None
- 516           */
- 517          void KEY_CL()
- 518          {
- 519   1        u8 KEY;
- 520   1        KEY = Scan_Key();
- 521   1        switch (KEY)
- 522   1        {
- 523   2          //K1 菜单键
- 524   2        case 0x47:
- 525   2          if (menuFlag == 0)
+ 488   1        u8 rekey;
+ 489   1        I2CStart();
+ 490   1        I2CWrByte(0x49); //读按键命令
+ 491   1        I2Cask();
+ 492   1        for (i = 0; i < 8; i++)
+ 493   1        {
+ 494   2          CLK_H;
+ 495   2          rekey = rekey << 1;
+ 496   2          if (DIO)
+ 497   2          {
+ 498   3            rekey++;
+ 499   3          }
+ 500   2          Delay_us(10);
+ 501   2          CLK_L;
+ 502   2        }
+ 503   1        I2Cask();
+ 504   1        I2CStop();
+ 505   1        return (rekey);
+ 506   1      }
+ 507          
+ 508          /**
+ 509           * @brief  按键监听事件
+ 510           * @note   
+ 511           * @retval None
+ 512           */
+ 513          void KEY_CL()
+ 514          {
+ 515   1        u8 KEY;
+ 516   1        KEY = Scan_Key();
+ 517   1        switch (KEY)
+ 518   1        {
+ 519   2          //K1 菜单键
+ 520   2        case 0x47:
+ 521   2          if (menuFlag == 0)
+ 522   2          {
+ 523   3            menuFlag = 1;
+ 524   3          }
+ 525   2          else if (menuFlag == 1 || menuFlag == 4) //当菜单层在输入密码和重设密码时，按菜单键执行换位操作
  526   2          {
- 527   3            menuFlag = 1;
- 528   3          }
- 529   2          else if (menuFlag == 1 || menuFlag == 4) //当菜单层在输入密码和重设密码时，按菜单键执行换位操作
- 530   2          {
- 531   3            psDigits++;
- 532   3            if (psDigits > 3)
- 533   3            {
- 534   4              psDigits = 0;
- 535   4            }
- 536   3          }
- 537   2          isPressed = KEY;
- 538   2          delay_ms(300);
- 539   2          break;
- 540   2          //K2  设置+
- 541   2        case 0x4F:
- 542   2          add();
- 543   2          isPressed = KEY;
- 544   2          //freqFlag=1;
- 545   2          delay_ms(300);
- 546   2          break;
- 547   2          //K3  设置-
- 548   2        case 0x57:
- 549   2          reduce();
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 10  
+ 527   3            psDigits++;
+ 528   3            if (psDigits > 3)
+ 529   3            {
+ 530   4              psDigits = 0;
+ 531   4            }
+ 532   3          }
+ 533   2          isPressed = KEY;
+ 534   2          delay_ms(300);
+ 535   2          break;
+ 536   2          //K2  设置+
+ 537   2        case 0x4F:
+ 538   2          add();
+ 539   2          isPressed = KEY;
+ 540   2          //freqFlag=1;
+ 541   2          delay_ms(300);
+ 542   2          break;
+ 543   2          //K3  设置-
+ 544   2        case 0x57:
+ 545   2          reduce();
+ 546   2          isPressed = KEY;
+ 547   2          delay_ms(300);
+ 548   2          break;
+ 549   2          //K4  确认
+C51 COMPILER V9.60.0.0   GUI                                                               04/07/2021 15:44:51 PAGE 10  
 
- 550   2          isPressed = KEY;
- 551   2          delay_ms(300);
- 552   2          break;
- 553   2          //K4  确认
- 554   2        case 0x5F: //K2
- 555   2          isPressed = KEY;
- 556   2          switch (longPress)
- 557   2          {
- 558   3          case 0:       //第一次点击
- 559   3            pressCounts = 0;
- 560   3            longPress = 1;
- 561   3            delay_ms(500);
- 562   3            break;
- 563   3          case 1:      //进入长按环节
- 564   3            if (pressCounts == 10)
- 565   3            {
- 566   4              //长按3s
- 567   4              if (longPress == 1)
- 568   4              {
- 569   5                longPress = 2; //进入长按环节，避免重复执行长按的操作
- 570   5              }
- 571   4            }
- 572   3            else
- 573   3            {
- 574   4              delay_ms(300);
- 575   4              pressCounts++;
- 576   4              AiP650_DisPlayFour(8888);
- 577   4                AiP650_DisPlayFour_1(8888);
- 578   4            }
- 579   3            break;
- 580   3          case 2: 
- 581   3               //长按三秒后
- 582   3            //重置所有参数
- 583   3            reset();
- 584   3            break;
- 585   3          default:
- 586   3            break;
- 587   3          }
- 588   2          break;
- 589   2        default: //松开按键和未执行按键操作时
- 590   2          longPress = 0;
- 591   2          pressCounts = 0;
- 592   2          if (isPressed == 0x5F)
- 593   2          {
- 594   3            AiP650_DisPlayFour(PEOPLE_NUMBER);
- 595   3            enter();
- 596   3            delay_ms(300);
- 597   3            isPressed = 0;
- 598   3          }
- 599   2          break;
- 600   2        }
- 601   1      }
-*** WARNING C316 IN LINE 601 OF HARDWARE\GUI\GUI.c: unterminated conditionals
+ 550   2        case 0x5F: //K2
+ 551   2          isPressed = KEY;
+ 552   2          switch (longPress)
+ 553   2          {
+ 554   3          case 0:       //第一次点击
+ 555   3            pressCounts = 0;
+ 556   3            longPress = 1;
+ 557   3            delay_ms(500);
+ 558   3            break;
+ 559   3          case 1:      //进入长按环节
+ 560   3            if (pressCounts == 10)
+ 561   3            {
+ 562   4              //长按3s
+ 563   4              if (longPress == 1)
+ 564   4              {
+ 565   5                longPress = 2; //进入长按环节，避免重复执行长按的操作
+ 566   5              }
+ 567   4            }
+ 568   3            else
+ 569   3            {
+ 570   4              delay_ms(300);
+ 571   4              pressCounts++;
+ 572   4              AiP650_DisPlayFour(8888);
+ 573   4                AiP650_DisPlayFour_1(8888);
+ 574   4            }
+ 575   3            break;
+ 576   3          case 2: 
+ 577   3               //长按三秒后
+ 578   3            //重置所有参数
+ 579   3            reset();
+ 580   3            break;
+ 581   3          default:
+ 582   3            break;
+ 583   3          }
+ 584   2          break;
+ 585   2        default: //松开按键和未执行按键操作时
+ 586   2          longPress = 0;
+ 587   2          pressCounts = 0;
+ 588   2          if (isPressed == 0x5F)
+ 589   2          {
+ 590   3            AiP650_DisPlayFour(PEOPLE_NUMBER);
+ 591   3            enter();
+ 592   3            delay_ms(300);
+ 593   3            isPressed = 0;
+ 594   3          }
+ 595   2          break;
+ 596   2        }
+ 597   1      }
+*** WARNING C316 IN LINE 597 OF HARDWARE\GUI\GUI.c: unterminated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1416    ----
+   CODE SIZE        =   1364    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =     17       3
    IDATA SIZE       =   ----    ----
-C51 COMPILER V9.60.0.0   GUI                                                               04/05/2021 11:10:52 PAGE 11  
-
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 

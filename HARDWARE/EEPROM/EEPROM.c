@@ -115,7 +115,7 @@ void EEPROM_init()
 	dB = IapReadByte(0x05);
 	Freq_Parm=IapReadByte(0x201);    
 	if (dB>100)
-	    dB=80;
+	    dB=90;
 	alarmLine=60+(99-dB);
 	if (Freq_Parm > 9)
 		Freq_Parm = 2;

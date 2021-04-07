@@ -13,6 +13,7 @@ extern u8 menu;      //菜单
 extern u8 menu_flag; //菜单标志
 extern u8 PA_flag;   //密码位数标志
 extern u8 freq_flag; //频率/声音显示标志
+extern u8 voiceFlag;
 
 //数码管0-9显示代码
 //--------------------------------0----1----2----3---4----5----6----7----8----9----10---11---12---13---14---15---16---17---18
@@ -200,8 +201,13 @@ void AiP650_DisPlayFour_1(u16 Display_num)
   AiP650_Set_1(0x68, DISPLAY_CODE[Temp[0]]);
   AiP650_Set_1(0x6A, DISPLAY_CODE[Temp[1]]);
   AiP650_Set_1(0x6C, DISPLAY_CODE[Temp[2]]); //加点	  AiP650_Set(0x6C,DISPLAY_CODE[Temp[2]]|0x80);
-
   AiP650_Set_1(0x6E, DISPLAY_CODE[Temp[3]]); //SW1=0;}
+   if (voiceFlag==1)
+  {
+   AiP650_Set_1(0x6E, DISPLAY_CODE[Temp[3]]|0x80); 
+  }else{
+    AiP650_Set_1(0x6E, DISPLAY_CODE[Temp[3]]);
+  }
 }
 
 /************************************************** 

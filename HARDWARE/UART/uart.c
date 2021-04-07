@@ -48,6 +48,14 @@ void UartSendStr(u8 *p){
     }
 }
 
+void UartSendu16(u16 dat){
+   u8 datL=dat;
+   u8 datH=dat>>8;
+   UartSend(datH);
+   UartSend(datL);
+    
+}
+
 /*
 *功能描述：中断函数
 *interrupt 4表示串行口中断
