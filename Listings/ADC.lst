@@ -1,11 +1,11 @@
-C51 COMPILER V9.60.0.0   ADC                                                               04/07/2021 17:01:40 PAGE 1   
+C51 COMPILER V9.59.0.0   ADC                                                               04/08/2021 12:36:05 PAGE 1   
 
 
-C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE ADC
 OBJECT MODULE PLACED IN .\Objects\ADC.obj
-COMPILER INVOKED BY: D:\Keil\C51\c51v960a\C51\BIN\C51.EXE HARDWARE\ADC\ADC.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAIN;.\de
-                    -lay;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR) DEBU
-                    -G OBJECTEXTEND PRINT(.\Listings\ADC.lst) TABS(2) OBJECT(.\Objects\ADC.obj)
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE HARDWARE\ADC\ADC.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAIN;.\delay;.\HARDWAR
+                    -E\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR) DEBUG OBJECTEXTEN
+                    -D PRINT(.\Listings\ADC.lst) TABS(2) OBJECT(.\Objects\ADC.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   51   1        _nop_();
   52   1        while (!(ADC_CONTR & 0x20))
   53   1          ;       // 查询 ADC 完成标志
-C51 COMPILER V9.60.0.0   ADC                                                               04/07/2021 17:01:40 PAGE 2   
+C51 COMPILER V9.59.0.0   ADC                                                               04/08/2021 12:36:05 PAGE 2   
 
   54   1        ADC_CONTR &= ~0x20; // 清完成标志
   55   1        adc_value = (ADC_RES << 8) | ADC_RESL;
@@ -126,7 +126,7 @@ line level    source
  113   5                LED2 = 0;
  114   5                if (voiceFlag == 0)
  115   5                  BUZZ = 0;
-C51 COMPILER V9.60.0.0   ADC                                                               04/07/2021 17:01:40 PAGE 3   
+C51 COMPILER V9.59.0.0   ADC                                                               04/08/2021 12:36:05 PAGE 3   
 
  116   5              }
  117   4              else if (ADC_Data0 > 400 && ADC_Data0 < 600)
@@ -190,7 +190,7 @@ line level    source
  175   2          adcCounts = 0;
  176   2          ADCResult0 = 0;
  177   2          //当人走了之后将所有参数复位
-C51 COMPILER V9.60.0.0   ADC                                                               04/07/2021 17:01:40 PAGE 4   
+C51 COMPILER V9.59.0.0   ADC                                                               04/08/2021 12:36:05 PAGE 4   
 
  178   2          isCountAN = 0;
  179   2          offLED();

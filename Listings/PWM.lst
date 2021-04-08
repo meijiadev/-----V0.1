@@ -1,11 +1,11 @@
-C51 COMPILER V9.60.0.0   PWM                                                               04/03/2021 12:04:58 PAGE 1   
+C51 COMPILER V9.59.0.0   PWM                                                               04/08/2021 12:36:05 PAGE 1   
 
 
-C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PWM
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE PWM
 OBJECT MODULE PLACED IN .\Objects\PWM.obj
-COMPILER INVOKED BY: D:\Keil\C51\c51v960a\C51\BIN\C51.EXE HARDWARE\PWM\PWM.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAIN;.\de
-                    -lay;.\HARDWARE\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR) DEBU
-                    -G OBJECTEXTEND PRINT(.\Listings\PWM.lst) TABS(2) OBJECT(.\Objects\PWM.obj)
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE HARDWARE\PWM\PWM.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\MAIN;.\delay;.\HARDWAR
+                    -E\AIP650;.\HARDWARE\GUI;.\HARDWARE\PWM;.\HARDWARE\EEPROM;.\HARDWARE\ADC;.\HARDWARE\UART;.\HARDWARE\IR) DEBUG OBJECTEXTEN
+                    -D PRINT(.\Listings\PWM.lst) TABS(2) OBJECT(.\Objects\PWM.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   51   2          PWM2C = 0xCA6;
   52   2          PWM20T2 = 0x0649;
   53   2          PWM20T1 = 0x0980;
-C51 COMPILER V9.60.0.0   PWM                                                               04/03/2021 12:04:58 PAGE 2   
+C51 COMPILER V9.59.0.0   PWM                                                               04/08/2021 12:36:05 PAGE 2   
 
   54   2          PWM21T2 = 0x0000;
   55   2          PWM21T1 = 0x032A;
@@ -126,7 +126,7 @@ line level    source
  113   1        P3M0 = 0x08;       //设置P33为推挽输出
  114   1        PWM15_PWM3_Enable();  //使能PWM模块
  115   1        P_SW2 = 0x80;
-C51 COMPILER V9.60.0.0   PWM                                                               04/03/2021 12:04:58 PAGE 3   
+C51 COMPILER V9.59.0.0   PWM                                                               04/08/2021 12:36:05 PAGE 3   
 
  116   1        PWM3CKS = 0x00; // 时钟选择 （系统时钟）
  117   1        //38Khz
