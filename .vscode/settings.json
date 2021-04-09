@@ -5,6 +5,7 @@
         "main.h": "c",
         "uart.h": "c",
         "adc.h": "c",
-        "aip650.h": "c"
+        "aip650.h": "c",
+        "INTRINS.H": "cpp"
     }
 }

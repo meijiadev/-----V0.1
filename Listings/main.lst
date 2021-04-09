@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   MAIN                                                              04/08/2021 12:36:04 PAGE 1   
+C51 COMPILER V9.59.0.0   MAIN                                                              04/09/2021 20:04:07 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
@@ -24,12 +24,12 @@ line level    source
   13          
   14          extern u8 menuFlag; //菜单
   15          
-  16          /********************************
-  17          功能描述：IO口初始化
-  18          入口参数：无
-  19          返回值：无
-  20          *********************************/
-  21          
+  16          
+  17          /**
+  18           * @brief  IO口初始化
+  19           * @note   
+  20           * @retval None
+  21           */
   22          void IO_init(void)
   23          {
   24   1        P0M1 &= 0x00;
@@ -50,74 +50,75 @@ line level    source
   39   1        P7M0 &= 0x00; //设置P7为准双向口
   40   1      }
   41          
-  42          /********************************
-  43          功能描述：主函数
-  44          入口参数：无
-  45          返回值：无
-  46          *********************************/
-  47          void main()
-  48          {
-  49   1        IO_init();
-  50   1        Light_Level_Set(6);
-  51   1        Light_Level_Set_1(6);
-  52   1        EEPROM_init();
-  53   1        adc_init(ADC_SYSclk_DIV_2); //初始化ADC,P1.0通道 ，ADC时钟频率：SYSclk/2
-C51 COMPILER V9.59.0.0   MAIN                                                              04/08/2021 12:36:04 PAGE 2   
+  42          
+  43          /**
+  44           * @brief  主函数
+  45           * @note   
+  46           * @retval None
+  47           */
+  48          void main()
+  49          {
+  50   1        IO_init();
+  51   1        Light_Level_Set(6);
+  52   1        Light_Level_Set_1(6);
+  53   1        EEPROM_init();
+C51 COMPILER V9.59.0.0   MAIN                                                              04/09/2021 20:04:07 PAGE 2   
 
-  54   1        menuFlag = 0;
-  55   1        UartInit();
-  56   1        delay_ms(10000);
-  57   1        initHardware();
-  58   1        delay_ms(5000);
-  59   1        while (1)
-  60   1        {
-  61   2          menuUI();
-  62   2          KEY_CL();        
-  63   2          if (menuFlag==0)
-  64   2          {
-  65   3          IRCheck();
-  66   3          Fore_XS();        
-  67   3          IR_Fore();
-  68   3          ADC();
-  69   3          }
-  70   2        }
-  71   1      
-  72   1      }
-  73          
-  74          /**
-  75           * @brief  初始化硬件
-  76           * @note   
-  77           * @retval None
-  78           */
-  79          void initHardware(){
-  80   1        u16 i;
-  81   1        for ( i = 0; i < 2; i++)
-  82   1        {
-  83   2        LED1=0;
-  84   2        delay_ms(600);
-  85   2        LED1=1;
-  86   2        LED2=0;
-  87   2        delay_ms(600);
-  88   2        LED2=1;
-  89   2        LED3=0;
-  90   2        delay_ms(600);
-  91   2        LED3=1;
-  92   2        LED4=0;
-  93   2        delay_ms(600);
-  94   2        LED4=1;
-  95   2        LED5=0;
-  96   2        delay_ms(600);
-  97   2        LED5=1;
-  98   2        LED6=0;
-  99   2        delay_ms(600);
- 100   2        LED6=1; 
- 101   2        }
- 102   1        BUZZ=0;
- 103   1        delay_ms(600);
- 104   1        BUZZ=1;
- 105   1      
- 106   1      }
-*** WARNING C316 IN LINE 106 OF MAIN\main.c: unterminated conditionals
+  54   1        adc_init(ADC_SYSclk_DIV_2); //初始化ADC,P1.0通道 ，ADC时钟频率：SYSclk/2
+  55   1        menuFlag = 0;
+  56   1        UartInit();
+  57   1        delay_ms(10000);
+  58   1        initHardware();
+  59   1        delay_ms(5000);
+  60   1        while (1)
+  61   1        {
+  62   2          menuUI();
+  63   2          KEY_CL();        
+  64   2          if (menuFlag==0)
+  65   2          {
+  66   3          IRCheck();
+  67   3          Fore_XS();        
+  68   3          IR_Fore();
+  69   3          ADC();
+  70   3          }
+  71   2        }
+  72   1      
+  73   1      }
+  74          
+  75          /**
+  76           * @brief  初始化硬件
+  77           * @note   
+  78           * @retval None
+  79           */
+  80          void initHardware(){
+  81   1        u16 i;
+  82   1        for ( i = 0; i < 2; i++)
+  83   1        {
+  84   2        LED1=0;
+  85   2        delay_ms(800);
+  86   2        LED1=1;
+  87   2        LED2=0;
+  88   2        delay_ms(800);
+  89   2        LED2=1;
+  90   2        LED3=0;
+  91   2        delay_ms(800);
+  92   2        LED3=1;
+  93   2        LED4=0;
+  94   2        delay_ms(800);
+  95   2        LED4=1;
+  96   2        LED5=0;
+  97   2        delay_ms(800);
+  98   2        LED5=1;
+  99   2        LED6=0;
+ 100   2        delay_ms(800);
+ 101   2        LED6=1; 
+ 102   2        }
+ 103   1        BUZZ=0;
+ 104   1        delay_ms(800);
+ 105   1        BUZZ=1;
+ 106   1      
+ 107   1      }
+*** WARNING C316 IN LINE 107 OF MAIN\main.c: unterminated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
@@ -125,9 +126,9 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       2
-C51 COMPILER V9.59.0.0   MAIN                                                              04/08/2021 12:36:04 PAGE 3   
+C51 COMPILER V9.59.0.0   MAIN                                                              04/09/2021 20:04:07 PAGE 3   
 
+   DATA SIZE        =   ----       2
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

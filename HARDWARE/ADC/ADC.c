@@ -8,12 +8,16 @@
 #include "uart.h"
 #include "delay.h"
 
-extern u8 IR_ON;		 //是否有人进入
-extern u16 ALARM_NUMBER; //报警人数
-extern u8 voiceFlag;	 //声音开关
-extern u8 dB;			 //灵敏度
-bit isCountAN = 0;		 //是否已经计算本次报警人数
-u8 alarmLine = 60;
+extern u8 IR_ON;		       //是否有人进入
+extern u16 ALARM_NUMBER;      //报警人数
+extern u8 voiceFlag;	     //声音开关
+extern u8 dB;			    //灵敏度
+bit isCountAN = 0;		   //是否已经计算本次报警人数
+u8 alarmLine = 60;         
+u16 ADCResult0;                 
+u16 adcCounts;            //计数
+u16 alarmCounts;          
+
 
 /*
 *@brief      ADC初始化
@@ -33,6 +37,9 @@ void adc_init(ADC_SPEED_enum speed)
 	ADCCFG |= 0x20;			//ADCCFG:1101 1110  设置右对齐
 }
 
+
+
+
 /*
  *  @brief     ADC转换一次
  * @param      adcn            选择ADC通道
@@ -48,23 +55,19 @@ int adc_once(ADCN_enum adcn, ADCRES_enum resolution)
 	ADC_CONTR |= 0x40; //开始ADC转换，转换完成后硬件自动将此位清零
 	_nop_();
 	_nop_();
-	_nop_();
-	while (!(ADC_CONTR & 0x20))
-		;				// 查询 ADC 完成标志
+	while (!(ADC_CONTR & 0x20));				// 查询 ADC 完成标志
 	ADC_CONTR &= ~0x20; // 清完成标志
 	adc_value = (ADC_RES << 8) | ADC_RESL;
 	adc_value >>= resolution; //取多少位
 	return adc_value;
 }
 
-u16 ADCResult0;
-u16 adcCounts; //计数
-u16 alarmCounts;
-/************************************************** 
-  功能描述: //ADC处理
-	入口参数：
-  说    明：                        
-**************************************************/
+
+/**
+ * @brief  获取当前的ADC转换值
+ * @note   
+ * @retval None
+ */
 void ADC()
 {
 	if (IR_ON == 1)
@@ -72,19 +75,12 @@ void ADC()
 
 		u16 ADC_Data0;
 		//float temp;
-		ADC_Data0 = adc_once(ADC_P10, ADC_10BIT); //采集一次ADC，精度10位
-												  //temp=(float)4900/(float)1024;
+		ADC_Data0 = adc_once(ADC_P10, ADC_10BIT);   //采集一次ADC，精度10位
+												   //temp=(float)4900/(float)1024;
 		//ADCResult0=(u16)(temp*(float)AD_Data0);  计算输出电压
-
-		// adcCounts++;
 		// ADCResult0=ADCResult0+ADC_Data0;
 		// ADC_Data0=ADCResult0/adcCounts;
-		// if (adcCounts>19)
-		// {
 
-		//   adcCounts=0;
-		//   ADCResult0=0;
-		// }
 		if (ADC_Data0 > alarmLine)
 		{
 			if (isCountAN == 0)
@@ -171,10 +167,10 @@ void ADC()
 	}
 	else if (IR_ON == 0)
 	{
+		//当人走了之后将所有参数复位
 		alarmCounts = 0;
 		adcCounts = 0;
 		ADCResult0 = 0;
-		//当人走了之后将所有参数复位
 		isCountAN = 0;
 		offLED();
 		BUZZ = 1; //关闭蜂鸣器

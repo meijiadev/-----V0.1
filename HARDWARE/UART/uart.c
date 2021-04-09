@@ -39,7 +39,7 @@ void UartSend(u8 dat){
 
 /*
   功能描述：往串口发送一个字符串
-  参数说明：字符指针
+  参数说明：字符指针(表示一个字符串)
 */
 void UartSendStr(u8 *p){
     while (*p)

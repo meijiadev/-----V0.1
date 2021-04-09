@@ -13,12 +13,12 @@
 
 extern u8 menuFlag; //菜单
 
-/********************************
-功能描述：IO口初始化
-入口参数：无
-返回值：无
-*********************************/
 
+/**
+ * @brief  IO口初始化
+ * @note   
+ * @retval None
+ */
 void IO_init(void)
 {
 	P0M1 &= 0x00;
@@ -39,11 +39,12 @@ void IO_init(void)
 	P7M0 &= 0x00; //设置P7为准双向口
 }
 
-/********************************
-功能描述：主函数
-入口参数：无
-返回值：无
-*********************************/
+
+/**
+ * @brief  主函数
+ * @note   
+ * @retval None
+ */
 void main()
 {
 	IO_init();
@@ -81,26 +82,26 @@ void initHardware(){
 	for ( i = 0; i < 2; i++)
 	{
 	LED1=0;
-	delay_ms(600);
+	delay_ms(800);
 	LED1=1;
 	LED2=0;
-	delay_ms(600);
+	delay_ms(800);
 	LED2=1;
 	LED3=0;
-	delay_ms(600);
+	delay_ms(800);
 	LED3=1;
 	LED4=0;
-	delay_ms(600);
+	delay_ms(800);
 	LED4=1;
 	LED5=0;
-	delay_ms(600);
+	delay_ms(800);
 	LED5=1;
 	LED6=0;
-	delay_ms(600);
+	delay_ms(800);
 	LED6=1;	
 	}
 	BUZZ=0;
-	delay_ms(600);
+	delay_ms(800);
 	BUZZ=1;
 
 }
